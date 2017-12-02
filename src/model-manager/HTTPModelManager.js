@@ -17,30 +17,33 @@ export default class HTTPModelManager extends ModelManagerInterface {
     /**
      * @inheritdoc
      */
-    get(id, modelClass) {
+    get(id, modelClass, options = {}) {
         return new Promise((resolve, reject) => {
-            // TODO
-            this._client.get().then((response) => {
-                resolve(new modelClass());
-            }).catch((e) => () => {
-                reject(e);
-            });
+            this._client.get(this._locator.locateById(id), this._getRequestOptions())
+                .then((response) => {
+                    resolve(new modelClass(response.data));
+                }).catch((e) => () => {
+                    reject(e);
+                });
         });
     }
 
     /**
      * @inheritdoc
      */
-    save(model) {
+    save(model, options = {}) {
         return new Promise((resolve, reject) => {
             let request;
+            const requestOptions = this._getRequestOptions({
+                data: {
+                    // TODO get data from model
+                }
+            });
 
             if (this._locator.isEmptyModelId(model)) {
-                // TODO
-                request = this._client.post();
+                request = this._client.post(this._locator.locate(model), requestOptions);
             } else {
-                // TODO
-                request = this._client.put();
+                request = this._client.put(this._locator.locate(model), requestOptions);
             }
 
             request.then(() => {
@@ -54,14 +57,23 @@ export default class HTTPModelManager extends ModelManagerInterface {
     /**
      * @inheritdoc
      */
-    remove(model) {
+    remove(model, options = {}) {
         return new Promise((resolve, reject) => {
-            // TODO
-            this._client.delete().then(() => {
+            this._client.delete(this._locator.locate(model), this._getRequestOptions()).then(() => {
                 resolve(true);
             }).catch((e) => () => {
                 reject(e);
             });
         });
+    }
+
+    /**
+     * Common request options.
+     * This method is for overwriting.
+     *
+     * @protected
+     */
+    _getRequestOptions(additional = {}) {
+        return additional;
     }
 }

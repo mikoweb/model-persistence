@@ -10,9 +10,10 @@ export default class ModelManagerInterface extends Interface {
      * @async
      * @param id
      * @param {Model.prototype} modelClass
+     * @param {Object} [options]
      * @return {Promise.<Model>}
      */
-    get(id, modelClass) {
+    get(id, modelClass, options = {}) {
         this.defineInterfaceMethod();
     }
 
@@ -21,9 +22,10 @@ export default class ModelManagerInterface extends Interface {
      *
      * @async
      * @param {Model} model
+     * @param {Object} [options]
      * @return {Promise.<Boolean>}
      */
-    save(model) {
+    save(model, options = {}) {
         this.defineInterfaceMethod();
     }
 
@@ -32,9 +34,10 @@ export default class ModelManagerInterface extends Interface {
      *
      * @async
      * @param {Model} model
+     * @param {Object} [options]
      * @return {Promise.<Boolean>}
      */
-    remove(model) {
+    remove(model, options = {}) {
         this.defineInterfaceMethod();
     }
 }

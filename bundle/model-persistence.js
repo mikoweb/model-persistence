@@ -241,6 +241,20 @@ var LocatorInterface = function (_Interface) {
     }
 
     /**
+     * Locate place by id.
+     *
+     * @param id
+     * @param {Object} [options]
+     * @return {string}
+     */
+
+  }, {
+    key: 'locateById',
+    value: function locateById(id) {
+      this.defineInterfaceMethod();
+    }
+
+    /**
      * Name of id property.
      *
      * @return {string}
@@ -249,6 +263,32 @@ var LocatorInterface = function (_Interface) {
   }, {
     key: 'getIdPropName',
     value: function getIdPropName() {
+      this.defineInterfaceMethod();
+    }
+
+    /**
+     * Get id from model.
+     *
+     * @param {Model} model
+     * @return {*}
+     */
+
+  }, {
+    key: 'getModelId',
+    value: function getModelId(model) {
+      this.defineInterfaceMethod();
+    }
+
+    /**
+     * Is empty model id?
+     *
+     * @param {Model} model
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isEmptyModelId',
+    value: function isEmptyModelId(model) {
       this.defineInterfaceMethod();
     }
 
@@ -300,6 +340,7 @@ var ModelManagerInterface = function (_Interface) {
      * @async
      * @param id
      * @param {Model.prototype} modelClass
+     * @param {Object} [options]
      * @return {Promise.<Model>}
      */
     value: function get$$1(id, modelClass) {
@@ -311,6 +352,7 @@ var ModelManagerInterface = function (_Interface) {
      *
      * @async
      * @param {Model} model
+     * @param {Object} [options]
      * @return {Promise.<Boolean>}
      */
 
@@ -325,6 +367,7 @@ var ModelManagerInterface = function (_Interface) {
      *
      * @async
      * @param {Model} model
+     * @param {Object} [options]
      * @return {Promise.<Boolean>}
      */
 
@@ -367,6 +410,57 @@ var RepositoryInterface = function (_Interface) {
 }(Interface);
 
 /**
+ * Abstract Locator with common methods.
+ */
+
+var LocatorAbstract = function (_LocatorInterface) {
+    inherits(LocatorAbstract, _LocatorInterface);
+
+    function LocatorAbstract() {
+        classCallCheck(this, LocatorAbstract);
+        return possibleConstructorReturn(this, (LocatorAbstract.__proto__ || Object.getPrototypeOf(LocatorAbstract)).apply(this, arguments));
+    }
+
+    createClass(LocatorAbstract, [{
+        key: 'getIdPropName',
+
+        /**
+         * @inheritdoc
+         */
+        value: function getIdPropName() {
+            return 'id';
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'getModelId',
+        value: function getModelId(model) {
+            if ((typeof model === 'undefined' ? 'undefined' : _typeof(model)) !== 'object' || !model.hasOwnProperty(this.getIdPropName())) {
+                new Error('Model has no property ' + this.getIdPropName());
+            }
+
+            return model[this.getIdPropName()];
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'isEmptyModelId',
+        value: function isEmptyModelId(model) {
+            var id = this.getModelId(model);
+
+            return id === null || typeof id === 'undefined' || typeof id === 'string' && id.length === 0;
+        }
+    }]);
+    return LocatorAbstract;
+}(LocatorInterface);
+
+/**
  * Data persistence by HTTP protocol.
  */
 
@@ -398,9 +492,8 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
             var _this2 = this;
 
             return new Promise(function (resolve, reject) {
-                // TODO
-                _this2._client.get().then(function (response) {
-                    resolve(new modelClass());
+                _this2._client.get(_this2._locator.locateById(id), _this2._getRequestOptions()).then(function (response) {
+                    resolve(new modelClass(response.data));
                 }).catch(function (e) {
                     return function () {
                         reject(e);
@@ -420,13 +513,16 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
 
             return new Promise(function (resolve, reject) {
                 var request = void 0;
+                var requestOptions = _this3._getRequestOptions({
+                    data: {
+                        // TODO get data from model
+                    }
+                });
 
                 if (_this3._locator.isEmptyModelId(model)) {
-                    // TODO
-                    request = _this3._client.post();
+                    request = _this3._client.post(_this3._locator.locate(model), requestOptions);
                 } else {
-                    // TODO
-                    request = _this3._client.put();
+                    request = _this3._client.put(_this3._locator.locate(model), requestOptions);
                 }
 
                 request.then(function () {
@@ -449,8 +545,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
             var _this4 = this;
 
             return new Promise(function (resolve, reject) {
-                // TODO
-                _this4._client.delete().then(function () {
+                _this4._client.delete(_this4._locator.locate(model), _this4._getRequestOptions()).then(function () {
                     resolve(true);
                 }).catch(function (e) {
                     return function () {
@@ -458,6 +553,21 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
                     };
                 });
             });
+        }
+
+        /**
+         * Common request options.
+         * This method is for overwriting.
+         *
+         * @protected
+         */
+
+    }, {
+        key: '_getRequestOptions',
+        value: function _getRequestOptions() {
+            var additional = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return additional;
         }
     }]);
     return HTTPModelManager;
@@ -510,150 +620,119 @@ var HTTPRepository = function (_RepositoryInterface) {
  * Locator which locates data by HTTP protocol.
  */
 
-var HTTPLocatorAbstract = function (_LocatorInterface) {
-    inherits(HTTPLocatorAbstract, _LocatorInterface);
+var HTTPLocatorAbstract = function (_LocatorAbstract) {
+  inherits(HTTPLocatorAbstract, _LocatorAbstract);
 
-    function HTTPLocatorAbstract() {
-        classCallCheck(this, HTTPLocatorAbstract);
-        return possibleConstructorReturn(this, (HTTPLocatorAbstract.__proto__ || Object.getPrototypeOf(HTTPLocatorAbstract)).apply(this, arguments));
+  function HTTPLocatorAbstract() {
+    classCallCheck(this, HTTPLocatorAbstract);
+    return possibleConstructorReturn(this, (HTTPLocatorAbstract.__proto__ || Object.getPrototypeOf(HTTPLocatorAbstract)).apply(this, arguments));
+  }
+
+  createClass(HTTPLocatorAbstract, [{
+    key: 'getBaseURL',
+
+
+    /**
+     * Get base URL.
+     *
+     * @return {string}
+     */
+    value: function getBaseURL() {
+      return '' + this.hostPath + this.basePath;
     }
 
-    createClass(HTTPLocatorAbstract, [{
-        key: 'getIdPropName',
+    /**
+     * Get custom URL.
+     *
+     * @param {string} path
+     * @return {string}
+     */
 
+  }, {
+    key: 'getUrl',
+    value: function getUrl(path) {
+      return '' + this.getBaseURL() + path;
+    }
 
-        /**
-         * @inheritdoc
-         */
-        value: function getIdPropName() {
-            return 'id';
-        }
+    /**
+     * @inheritdoc
+     */
 
-        /**
-         * Get base URL.
-         *
-         * @return {string}
-         */
+  }, {
+    key: 'locate',
+    value: function locate(model) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    }, {
-        key: 'getBaseURL',
-        value: function getBaseURL() {
-            return '' + this.hostPath + this.basePath;
-        }
+      return this.isEmptyModelId(model) ? this.getBaseURL() : this.locateById(this.getModelId(model), options);
+    }
 
-        /**
-         * Get custom URL.
-         *
-         * @param {string} path
-         * @return {string}
-         */
+    /**
+     * @inheritdoc
+     */
 
-    }, {
-        key: 'getUrl',
-        value: function getUrl(path) {
-            return '' + this.getBaseURL() + path;
-        }
+  }, {
+    key: 'locateById',
+    value: function locateById(id) {
+      return this.getUrl('/' + id);
+    }
 
-        /**
-         * Get id from model.
-         *
-         * @param {Model} model
-         * @return {*}
-         */
+    /**
+     * @inheritdoc
+     */
 
-    }, {
-        key: 'getModelId',
-        value: function getModelId(model) {
-            if ((typeof model === 'undefined' ? 'undefined' : _typeof(model)) !== 'object' || !model.hasOwnProperty(this.getIdPropName())) {
-                new Error('Model has no property ' + this.getIdPropName());
-            }
+  }, {
+    key: 'getModelManagerClass',
+    value: function getModelManagerClass() {
+      return HTTPModelManager;
+    }
 
-            return model[this.getIdPropName()];
-        }
+    /**
+     * @inheritdoc
+     */
 
-        /**
-         * Is empty model id?
-         * @param {Model} model
-         * @return {boolean}
-         */
+  }, {
+    key: 'getRepositoryClass',
+    value: function getRepositoryClass() {
+      return HTTPRepository;
+    }
+  }, {
+    key: 'hostPath',
 
-    }, {
-        key: 'isEmptyModelId',
-        value: function isEmptyModelId(model) {
-            var id = this.getModelId(model);
+    /**
+     * Host path like https://google.com. It's optionally.
+     *
+     * @return {string|null}
+     */
+    get: function get$$1() {
+      return null;
+    }
 
-            return id === null || typeof id === 'undefined' || typeof id === 'string' && id.length === 0;
-        }
+    /**
+     * Base path in URL.
+     *
+     * @return {string}
+     */
 
-        /**
-         * @inheritdoc
-         */
+  }, {
+    key: 'basePath',
+    get: function get$$1() {
+      throw new Error('basePath should be defined in HTTPLocator');
+    }
 
-    }, {
-        key: 'locate',
-        value: function locate(model) {
-            var id = this.getModelId(model);
+    /**
+     * Additional headers e.g. api key.
+     *
+     * @return {Object}
+     */
 
-            return this.getUrl(this.isEmptyModelId(model) ? '' : '/' + id);
-        }
-
-        /**
-         * @inheritdoc
-         */
-
-    }, {
-        key: 'getModelManagerClass',
-        value: function getModelManagerClass() {
-            return HTTPModelManager;
-        }
-
-        /**
-         * @inheritdoc
-         */
-
-    }, {
-        key: 'getRepositoryClass',
-        value: function getRepositoryClass() {
-            return HTTPRepository;
-        }
-    }, {
-        key: 'hostPath',
-
-        /**
-         * Host path like https://google.com. It's optionally.
-         *
-         * @return {string|null}
-         */
-        get: function get$$1() {
-            return null;
-        }
-
-        /**
-         * Base path in URL.
-         *
-         * @return {string}
-         */
-
-    }, {
-        key: 'basePath',
-        get: function get$$1() {
-            throw new Error('basePath should be defined in HTTPLocator');
-        }
-
-        /**
-         * Additional headers e.g. api key.
-         *
-         * @return {Object}
-         */
-
-    }, {
-        key: 'headers',
-        get: function get$$1() {
-            return {};
-        }
-    }]);
-    return HTTPLocatorAbstract;
-}(LocatorInterface);
+  }, {
+    key: 'headers',
+    get: function get$$1() {
+      return {};
+    }
+  }]);
+  return HTTPLocatorAbstract;
+}(LocatorAbstract);
 
 /**
  * @param {HTTPLocatorAbstract} locator

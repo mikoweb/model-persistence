@@ -16,11 +16,42 @@ export default class LocatorInterface extends Interface {
     }
 
     /**
+     * Locate place by id.
+     *
+     * @param id
+     * @param {Object} [options]
+     * @return {string}
+     */
+    locateById(id, options = {}) {
+        this.defineInterfaceMethod();
+    }
+
+    /**
      * Name of id property.
      *
      * @return {string}
      */
     getIdPropName() {
+        this.defineInterfaceMethod();
+    }
+
+    /**
+     * Get id from model.
+     *
+     * @param {Model} model
+     * @return {*}
+     */
+    getModelId(model) {
+        this.defineInterfaceMethod();
+    }
+
+    /**
+     * Is empty model id?
+     *
+     * @param {Model} model
+     * @return {boolean}
+     */
+    isEmptyModelId(model) {
         this.defineInterfaceMethod();
     }
 

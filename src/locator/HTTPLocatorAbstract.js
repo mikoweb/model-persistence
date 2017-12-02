@@ -1,11 +1,11 @@
-import LocatorInterface from './LocatorInterface';
+import LocatorAbstract from './LocatorAbstract';
 import HTTPModelManager from '../model-manager/HTTPModelManager';
 import HTTPRepository from '../repository/HTTPRepository';
 
 /**
  * Locator which locates data by HTTP protocol.
  */
-export default class HTTPLocatorAbstract extends LocatorInterface {
+export default class HTTPLocatorAbstract extends LocatorAbstract {
     /**
      * Host path like https://google.com. It's optionally.
      *
@@ -34,13 +34,6 @@ export default class HTTPLocatorAbstract extends LocatorInterface {
     }
 
     /**
-     * @inheritdoc
-     */
-    getIdPropName() {
-        return 'id';
-    }
-
-    /**
      * Get base URL.
      *
      * @return {string}
@@ -60,37 +53,19 @@ export default class HTTPLocatorAbstract extends LocatorInterface {
     }
 
     /**
-     * Get id from model.
-     *
-     * @param {Model} model
-     * @return {*}
+     * @inheritdoc
      */
-    getModelId(model) {
-        if (typeof model !== 'object' || !model.hasOwnProperty(this.getIdPropName())) {
-            new Error('Model has no property ' + this.getIdPropName());
-        }
-
-        return model[this.getIdPropName()];
-    }
-
-    /**
-     * Is empty model id?
-     * @param {Model} model
-     * @return {boolean}
-     */
-    isEmptyModelId(model) {
-        const id = this.getModelId(model);
-
-        return id === null || typeof id === 'undefined' || (typeof id === 'string' && id.length === 0);
+    locate(model, options = {}) {
+        return this.isEmptyModelId(model)
+            ? this.getBaseURL()
+            : this.locateById(this.getModelId(model), options);
     }
 
     /**
      * @inheritdoc
      */
-    locate(model, options = {}) {
-        const id = this.getModelId(model);
-
-        return this.getUrl(this.isEmptyModelId(model) ? '' : `/${id}`);
+    locateById(id, options = {}) {
+        return this.getUrl(`/${id}`);
     }
 
     /**

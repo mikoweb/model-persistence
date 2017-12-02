@@ -1,4 +1,4 @@
-import Model from "objectmodel"; // http://objectmodel.js.org/docs/v2/
+import Model from 'objectmodel'; // http://objectmodel.js.org/docs/v2/
 import LocatorInterface from './locator/LocatorInterface';
 import ModelManagerInterface from './model-manager/ModelManagerInterface';
 import RepositoryInterface from './repository/RepositoryInterface';
