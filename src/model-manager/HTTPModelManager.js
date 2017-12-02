@@ -20,6 +20,11 @@ export default class HTTPModelManager extends ModelManagerInterface {
     get(id, modelClass) {
         return new Promise((resolve, reject) => {
             // TODO
+            this._client.get().then((response) => {
+                resolve(new modelClass());
+            }).catch((e) => () => {
+                reject(e);
+            });
         });
     }
 
@@ -28,7 +33,21 @@ export default class HTTPModelManager extends ModelManagerInterface {
      */
     save(model) {
         return new Promise((resolve, reject) => {
-            // TODO
+            let request;
+
+            if (this._locator.isEmptyModelId(model)) {
+                // TODO
+                request = this._client.post();
+            } else {
+                // TODO
+                request = this._client.put();
+            }
+
+            request.then(() => {
+                resolve(true);
+            }).catch((e) => () => {
+                reject(e);
+            });
         });
     }
 
@@ -38,6 +57,11 @@ export default class HTTPModelManager extends ModelManagerInterface {
     remove(model) {
         return new Promise((resolve, reject) => {
             // TODO
+            this._client.delete().then(() => {
+                resolve(true);
+            }).catch((e) => () => {
+                reject(e);
+            });
         });
     }
 }

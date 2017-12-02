@@ -74,17 +74,23 @@ export default class HTTPLocatorAbstract extends LocatorInterface {
     }
 
     /**
+     * Is empty model id?
+     * @param {Model} model
+     * @return {boolean}
+     */
+    isEmptyModelId(model) {
+        const id = this.getModelId(model);
+
+        return id === null || typeof id === 'undefined' || (typeof id === 'string' && id.length === 0);
+    }
+
+    /**
      * @inheritdoc
      */
     locate(model, options = {}) {
         const id = this.getModelId(model);
-        let path = '';
 
-        if (id !== null && typeof id !== 'undefined' && !isNaN(id)) {
-            path += `/${id}`;
-        }
-
-        return this.getUrl(path);
+        return this.getUrl(this.isEmptyModelId(model) ? '' : `/${id}`);
     }
 
     /**

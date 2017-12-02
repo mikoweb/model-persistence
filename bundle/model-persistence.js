@@ -395,8 +395,17 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
     createClass(HTTPModelManager, [{
         key: 'get',
         value: function get$$1(id, modelClass) {
+            var _this2 = this;
+
             return new Promise(function (resolve, reject) {
                 // TODO
+                _this2._client.get().then(function (response) {
+                    resolve(new modelClass());
+                }).catch(function (e) {
+                    return function () {
+                        reject(e);
+                    };
+                });
             });
         }
 
@@ -407,8 +416,26 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
     }, {
         key: 'save',
         value: function save(model) {
+            var _this3 = this;
+
             return new Promise(function (resolve, reject) {
-                // TODO
+                var request = void 0;
+
+                if (_this3._locator.isEmptyModelId(model)) {
+                    // TODO
+                    request = _this3._client.post();
+                } else {
+                    // TODO
+                    request = _this3._client.put();
+                }
+
+                request.then(function () {
+                    resolve(true);
+                }).catch(function (e) {
+                    return function () {
+                        reject(e);
+                    };
+                });
             });
         }
 
@@ -419,8 +446,17 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
     }, {
         key: 'remove',
         value: function remove(model) {
+            var _this4 = this;
+
             return new Promise(function (resolve, reject) {
                 // TODO
+                _this4._client.delete().then(function () {
+                    resolve(true);
+                }).catch(function (e) {
+                    return function () {
+                        reject(e);
+                    };
+                });
             });
         }
     }]);
@@ -536,6 +572,20 @@ var HTTPLocatorAbstract = function (_LocatorInterface) {
         }
 
         /**
+         * Is empty model id?
+         * @param {Model} model
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isEmptyModelId',
+        value: function isEmptyModelId(model) {
+            var id = this.getModelId(model);
+
+            return id === null || typeof id === 'undefined' || typeof id === 'string' && id.length === 0;
+        }
+
+        /**
          * @inheritdoc
          */
 
@@ -543,13 +593,8 @@ var HTTPLocatorAbstract = function (_LocatorInterface) {
         key: 'locate',
         value: function locate(model) {
             var id = this.getModelId(model);
-            var path = '';
 
-            if (id !== null && typeof id !== 'undefined' && !isNaN(id)) {
-                path += '/' + id;
-            }
-
-            return this.getUrl(path);
+            return this.getUrl(this.isEmptyModelId(model) ? '' : '/' + id);
         }
 
         /**
@@ -615,7 +660,10 @@ var HTTPLocatorAbstract = function (_LocatorInterface) {
  * @return {AxiosInstance}
  */
 var createClient = function createClient(locator) {
-  return axios.create({});
+    return axios.create({
+        baseURL: locator.getBaseURL(),
+        headers: locator.headers
+    });
 };
 
 var HTTPFactory = function () {
