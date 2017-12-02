@@ -1,5 +1,3 @@
-import HTTPModelManager from '../model-manager/HTTPModelManager';
-import HTTPRepository from '../repository/HTTPRepository';
 import createClient from '../http/createClient';
 
 export default class HTTPFactory {
@@ -10,7 +8,9 @@ export default class HTTPFactory {
      * @return {HTTPModelManager}
      */
     createManager(locator) {
-        return new HTTPModelManager(locator, createClient(locator));
+        const Manager = locator.getModelManagerClass();
+
+        return new Manager(locator, createClient(locator));
     }
 
     /**
@@ -21,8 +21,9 @@ export default class HTTPFactory {
      * @return {HTTPRepository}
      */
     createRepository(modelClass, locator) {
+        const Repository = locator.getRepositoryClass();
         const manager = this.createManager(locator);
 
-        return new HTTPRepository(modelClass, locator, manager, createClient(locator));
+        return new Repository(modelClass, locator, manager, createClient(locator));
     }
 }

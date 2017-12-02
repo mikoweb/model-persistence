@@ -678,6 +678,8 @@ var HTTPLocatorAbstract = function (_LocatorAbstract) {
 
     /**
      * @inheritdoc
+     *
+     * @return {HTTPModelManager.prototype}
      */
 
   }, {
@@ -688,6 +690,8 @@ var HTTPLocatorAbstract = function (_LocatorAbstract) {
 
     /**
      * @inheritdoc
+     *
+     * @return {HTTPRepository.prototype}
      */
 
   }, {
@@ -760,7 +764,9 @@ var HTTPFactory = function () {
          * @return {HTTPModelManager}
          */
         value: function createManager(locator) {
-            return new HTTPModelManager(locator, createClient(locator));
+            var Manager = locator.getModelManagerClass();
+
+            return new Manager(locator, createClient(locator));
         }
 
         /**
@@ -774,9 +780,10 @@ var HTTPFactory = function () {
     }, {
         key: 'createRepository',
         value: function createRepository(modelClass, locator) {
+            var Repository = locator.getRepositoryClass();
             var manager = this.createManager(locator);
 
-            return new HTTPRepository(modelClass, locator, manager, createClient(locator));
+            return new Repository(modelClass, locator, manager, createClient(locator));
         }
     }]);
     return HTTPFactory;

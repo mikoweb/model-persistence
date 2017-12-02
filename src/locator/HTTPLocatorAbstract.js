@@ -70,6 +70,8 @@ export default class HTTPLocatorAbstract extends LocatorAbstract {
 
     /**
      * @inheritdoc
+     *
+     * @return {HTTPModelManager.prototype}
      */
     getModelManagerClass() {
         return HTTPModelManager;
@@ -77,6 +79,8 @@ export default class HTTPLocatorAbstract extends LocatorAbstract {
 
     /**
      * @inheritdoc
+     *
+     * @return {HTTPRepository.prototype}
      */
     getRepositoryClass() {
         return HTTPRepository;
