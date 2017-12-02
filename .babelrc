@@ -1,0 +1,15 @@
+{
+  "sourceMaps": true,
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["safari >= 7", "ie >= 11"]
+      },
+      "modules": false
+    }]
+  ],
+  "plugins": [
+    "external-helpers"
+  ],
+  "ast": false
+}
