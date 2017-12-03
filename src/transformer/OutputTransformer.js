@@ -1,5 +1,6 @@
 import TransformerInterface from './TransformerInterface';
 import modelHelpers from '../model/modelHelpers';
+import DynamicModel from '../model/DynamicModel';
 
 /**
  * Default output transformer.
@@ -16,7 +17,7 @@ export default class OutputTransformer extends TransformerInterface {
 
         if (modelHelpers.isModel(object)) {
             data = modelHelpers.getData(object);
-        } else if (modelHelpers.isRawObject(object)) {
+        } else if (object instanceof DynamicModel || modelHelpers.isRawObject(object)) {
             data = object;
         }
 

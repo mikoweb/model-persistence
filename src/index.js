@@ -1,4 +1,5 @@
 import Model from 'objectmodel'; // http://objectmodel.js.org/docs/v2/
+import DynamicModel from './model/DynamicModel';
 import LocatorInterface from './locator/LocatorInterface';
 import ModelManagerInterface from './model-manager/ModelManagerInterface';
 import RepositoryInterface from './repository/RepositoryInterface';
@@ -17,6 +18,7 @@ import modelHelpers from './model/modelHelpers';
 
 export default {
     Model,
+    DynamicModel,
     modelHelpers,
     LocatorInterface,
     ModelManagerInterface,
