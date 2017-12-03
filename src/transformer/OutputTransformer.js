@@ -1,4 +1,5 @@
 import TransformerInterface from './TransformerInterface';
+import modelHelpers from '../model/modelHelpers';
 
 /**
  * Default output transformer.
@@ -11,7 +12,14 @@ export default class OutputTransformer extends TransformerInterface {
      * @inheritdoc
      */
     transform(object) {
-        // TODO only properties from model schema (if object is Model)
-        return object;
+        let data = {};
+
+        if (modelHelpers.isModel(object)) {
+            data = modelHelpers.getData(object);
+        } else if (modelHelpers.isRawObject(object)) {
+            data = object;
+        }
+
+        return data;
     }
 }
