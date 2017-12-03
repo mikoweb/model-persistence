@@ -38,8 +38,8 @@ class ModelHelpers {
      * @param {Object} object
      */
     isModel(object) {
-        return typeof object === 'object' && typeof object.constructor === 'function'
-            && object.constructor instanceof Model;
+        return typeof object === 'object' && (object instanceof Model ||
+            (typeof object.constructor === 'function' && object.constructor instanceof Model));
     }
 
     /**
