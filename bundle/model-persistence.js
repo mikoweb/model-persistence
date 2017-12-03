@@ -1070,6 +1070,34 @@ var CustomTransformer = function (_TransformerInterface) {
     return CustomTransformer;
 }(TransformerInterface);
 
+/**
+ * @param {Array.<TransformerInterface>} transformers
+ */
+var mergeTransformers = function mergeTransformers(transformers) {
+    return function (_TransformerInterface) {
+        inherits(_class, _TransformerInterface);
+
+        function _class() {
+            classCallCheck(this, _class);
+            return possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+        }
+
+        createClass(_class, [{
+            key: 'transform',
+
+            /**
+             * @inheritdoc
+             */
+            value: function transform(object) {
+                transformers.forEach(function (transformer) {
+                    transformer.transform(object);
+                });
+            }
+        }]);
+        return _class;
+    }(TransformerInterface);
+};
+
 var index = {
     Model: Model,
     modelHelpers: helpers,
@@ -1088,7 +1116,8 @@ var index = {
         TransformerInterface: TransformerInterface,
         InputTransformer: InputTransformer,
         OutputTransformer: OutputTransformer,
-        CustomTransformer: CustomTransformer
+        CustomTransformer: CustomTransformer,
+        mergeTransformers: mergeTransformers
     }
 };
 
