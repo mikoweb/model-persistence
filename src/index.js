@@ -7,6 +7,7 @@ import HTTPModelManager from './model-manager/HTTPModelManager';
 import HTTPRepository from './repository/HTTPRepository';
 import httpFactory from './factory/http';
 import createHTTPClient from './http/createClient';
+import httpClientConfig from './http/clientConfig';
 
 export default {
     Model,
@@ -18,6 +19,7 @@ export default {
     HTTPRepository,
     httpFactory,
     http: {
-        createClient: createHTTPClient
+        createClient: createHTTPClient,
+        config: httpClientConfig
     }
 };

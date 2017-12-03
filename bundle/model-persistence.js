@@ -738,15 +738,46 @@ var HTTPLocatorAbstract = function (_LocatorAbstract) {
   return HTTPLocatorAbstract;
 }(LocatorAbstract);
 
+var ClientConfig = function () {
+    function ClientConfig() {
+        classCallCheck(this, ClientConfig);
+
+        this.options = {};
+    }
+
+    /**
+     * @return {Object}
+     */
+
+
+    createClass(ClientConfig, [{
+        key: "options",
+        get: function get$$1() {
+            return Object.assign({}, this._options);
+        }
+
+        /**
+         * @param {Object} options
+         */
+        ,
+        set: function set$$1(options) {
+            this._options = Object.assign({}, options);
+        }
+    }]);
+    return ClientConfig;
+}();
+
+var options = new ClientConfig();
+
 /**
  * @param {HTTPLocatorAbstract} locator
  * @return {AxiosInstance}
  */
 var createClient = function createClient(locator) {
-    return axios.create({
+    return axios.create(Object.assign({}, options.options, {
         baseURL: locator.getBaseURL(),
         headers: locator.headers
-    });
+    }));
 };
 
 var HTTPFactory = function () {
@@ -801,7 +832,8 @@ var index = {
     HTTPRepository: HTTPRepository,
     httpFactory: factory,
     http: {
-        createClient: createClient
+        createClient: createClient,
+        config: options
     }
 };
 
