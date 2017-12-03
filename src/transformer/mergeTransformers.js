@@ -9,9 +9,13 @@ const mergeTransformers = (transformers) => {
          * @inheritdoc
          */
         transform(object) {
+            let data = object;
+
             transformers.forEach((transformer) => {
-                transformer.transform(object);
+                data = transformer.transform(data);
             });
+
+            return data;
         }
     };
 };
