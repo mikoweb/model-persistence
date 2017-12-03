@@ -21,7 +21,7 @@ export default class HTTPModelManager extends ModelManagerInterface {
         return new Promise((resolve, reject) => {
             this._client.get(this._locator.locateById(id), this._getRequestOptions())
                 .then((response) => {
-                    resolve(new modelClass(response.data));
+                    resolve(new modelClass(this.createInputTransformer().transform(response.data)));
                 }).catch((e) => () => {
                     reject(e);
                 });
@@ -35,9 +35,7 @@ export default class HTTPModelManager extends ModelManagerInterface {
         return new Promise((resolve, reject) => {
             let request;
             const requestOptions = this._getRequestOptions({
-                data: {
-                    // TODO get data from model
-                }
+                data: this.createOutputTransformer().transform(model)
             });
 
             if (this._locator.isEmptyModelId(model)) {
@@ -65,6 +63,28 @@ export default class HTTPModelManager extends ModelManagerInterface {
                 reject(e);
             });
         });
+    }
+
+    /**
+     * Create input transformer object.
+     *
+     * @return {TransformerInterface}
+     */
+    createInputTransformer() {
+        const Transformer = this._locator.getInputTransformerClass();
+
+        return new Transformer();
+    }
+
+    /**
+     * Create output transformer object.
+     *
+     * @return {TransformerInterface}
+     */
+    createOutputTransformer() {
+        const Transformer = this._locator.getOutputTransformerClass();
+
+        return new Transformer();
     }
 
     /**

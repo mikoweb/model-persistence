@@ -8,6 +8,9 @@ import HTTPRepository from './repository/HTTPRepository';
 import httpFactory from './factory/http';
 import createHTTPClient from './http/createClient';
 import httpClientConfig from './http/clientConfig';
+import TransformerInterface from './transformer/TransformerInterface';
+import InputTransformer from './transformer/InputTransformer';
+import OutputTransformer from './transformer/OutputTransformer';
 
 export default {
     Model,
@@ -21,5 +24,10 @@ export default {
     http: {
         createClient: createHTTPClient,
         config: httpClientConfig
+    },
+    transformer: {
+        TransformerInterface,
+        InputTransformer,
+        OutputTransformer
     }
 };

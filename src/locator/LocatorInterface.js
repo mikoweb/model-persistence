@@ -72,4 +72,22 @@ export default class LocatorInterface extends Interface {
     getRepositoryClass() {
         this.defineInterfaceMethod();
     }
+
+    /**
+     * Input Transformer class related to this locator.
+     *
+     * @return {TransformerInterface.prototype}
+     */
+    getInputTransformerClass() {
+        this.defineInterfaceMethod();
+    }
+
+    /**
+     * Input Transformer class related to this locator.
+     *
+     * @return {TransformerInterface.prototype}
+     */
+    getOutputTransformerClass() {
+        this.defineInterfaceMethod();
+    }
 }

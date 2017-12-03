@@ -315,6 +315,30 @@ var LocatorInterface = function (_Interface) {
     value: function getRepositoryClass() {
       this.defineInterfaceMethod();
     }
+
+    /**
+     * Input Transformer class related to this locator.
+     *
+     * @return {TransformerInterface.prototype}
+     */
+
+  }, {
+    key: 'getInputTransformerClass',
+    value: function getInputTransformerClass() {
+      this.defineInterfaceMethod();
+    }
+
+    /**
+     * Input Transformer class related to this locator.
+     *
+     * @return {TransformerInterface.prototype}
+     */
+
+  }, {
+    key: 'getOutputTransformerClass',
+    value: function getOutputTransformerClass() {
+      this.defineInterfaceMethod();
+    }
   }]);
   return LocatorInterface;
 }(Interface);
@@ -410,6 +434,92 @@ var RepositoryInterface = function (_Interface) {
 }(Interface);
 
 /**
+ * Data Transformer.
+ */
+
+var TransformerInterface = function (_Interface) {
+  inherits(TransformerInterface, _Interface);
+
+  function TransformerInterface() {
+    classCallCheck(this, TransformerInterface);
+    return possibleConstructorReturn(this, (TransformerInterface.__proto__ || Object.getPrototypeOf(TransformerInterface)).apply(this, arguments));
+  }
+
+  createClass(TransformerInterface, [{
+    key: 'transform',
+
+    /**
+     * Transform data.
+     *
+     * @async
+     * @param {Object} object
+     * @return {Object}
+     */
+    value: function transform(object) {
+      this.defineInterfaceMethod();
+    }
+  }]);
+  return TransformerInterface;
+}(Interface);
+
+/**
+ * Default input transformer.
+ * Used as "middleware" between data source (e.g. HTTP Response) and Model constructor.
+ */
+
+var InputTransformer = function (_TransformerInterface) {
+  inherits(InputTransformer, _TransformerInterface);
+
+  function InputTransformer() {
+    classCallCheck(this, InputTransformer);
+    return possibleConstructorReturn(this, (InputTransformer.__proto__ || Object.getPrototypeOf(InputTransformer)).apply(this, arguments));
+  }
+
+  createClass(InputTransformer, [{
+    key: 'transform',
+
+    /**
+     * By default, nothing changes.
+     *
+     * @inheritdoc
+     */
+    value: function transform(object) {
+      return object;
+    }
+  }]);
+  return InputTransformer;
+}(TransformerInterface);
+
+/**
+ * Default output transformer.
+ * Used as "middleware" between Model and data storage (e.g. HTTP Request).
+ */
+
+var OutputTransformer = function (_TransformerInterface) {
+  inherits(OutputTransformer, _TransformerInterface);
+
+  function OutputTransformer() {
+    classCallCheck(this, OutputTransformer);
+    return possibleConstructorReturn(this, (OutputTransformer.__proto__ || Object.getPrototypeOf(OutputTransformer)).apply(this, arguments));
+  }
+
+  createClass(OutputTransformer, [{
+    key: 'transform',
+
+    /**
+     * By default, nothing changes.
+     *
+     * @inheritdoc
+     */
+    value: function transform(object) {
+      // TODO only properties from model schema (if object is Model)
+      return object;
+    }
+  }]);
+  return OutputTransformer;
+}(TransformerInterface);
+
+/**
  * Abstract Locator with common methods.
  */
 
@@ -456,6 +566,26 @@ var LocatorAbstract = function (_LocatorInterface) {
 
             return id === null || typeof id === 'undefined' || typeof id === 'string' && id.length === 0;
         }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'getInputTransformerClass',
+        value: function getInputTransformerClass() {
+            return InputTransformer;
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'getOutputTransformerClass',
+        value: function getOutputTransformerClass() {
+            return OutputTransformer;
+        }
     }]);
     return LocatorAbstract;
 }(LocatorInterface);
@@ -493,7 +623,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
 
             return new Promise(function (resolve, reject) {
                 _this2._client.get(_this2._locator.locateById(id), _this2._getRequestOptions()).then(function (response) {
-                    resolve(new modelClass(response.data));
+                    resolve(new modelClass(_this2.createInputTransformer().transform(response.data)));
                 }).catch(function (e) {
                     return function () {
                         reject(e);
@@ -514,9 +644,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
             return new Promise(function (resolve, reject) {
                 var request = void 0;
                 var requestOptions = _this3._getRequestOptions({
-                    data: {
-                        // TODO get data from model
-                    }
+                    data: _this3.createOutputTransformer().transform(model)
                 });
 
                 if (_this3._locator.isEmptyModelId(model)) {
@@ -553,6 +681,34 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
                     };
                 });
             });
+        }
+
+        /**
+         * Create input transformer object.
+         *
+         * @return {TransformerInterface}
+         */
+
+    }, {
+        key: 'createInputTransformer',
+        value: function createInputTransformer() {
+            var Transformer = this._locator.getInputTransformerClass();
+
+            return new Transformer();
+        }
+
+        /**
+         * Create output transformer object.
+         *
+         * @return {TransformerInterface}
+         */
+
+    }, {
+        key: 'createOutputTransformer',
+        value: function createOutputTransformer() {
+            var Transformer = this._locator.getOutputTransformerClass();
+
+            return new Transformer();
         }
 
         /**
@@ -834,6 +990,11 @@ var index = {
     http: {
         createClient: createClient,
         config: options
+    },
+    transformer: {
+        TransformerInterface: TransformerInterface,
+        InputTransformer: InputTransformer,
+        OutputTransformer: OutputTransformer
     }
 };
 

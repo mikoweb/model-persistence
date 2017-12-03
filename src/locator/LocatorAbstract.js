@@ -1,4 +1,6 @@
 import LocatorInterface from './LocatorInterface';
+import InputTransformer from '../transformer/InputTransformer';
+import OutputTransformer from '../transformer/OutputTransformer';
 
 /**
  * Abstract Locator with common methods.
@@ -29,5 +31,19 @@ export default class LocatorAbstract extends LocatorInterface {
         const id = this.getModelId(model);
 
         return id === null || typeof id === 'undefined' || (typeof id === 'string' && id.length === 0);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    getInputTransformerClass() {
+        return InputTransformer;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    getOutputTransformerClass() {
+        return OutputTransformer;
     }
 }
