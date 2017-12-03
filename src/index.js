@@ -11,9 +11,11 @@ import httpClientConfig from './http/clientConfig';
 import TransformerInterface from './transformer/TransformerInterface';
 import InputTransformer from './transformer/InputTransformer';
 import OutputTransformer from './transformer/OutputTransformer';
+import modelHelpers from './model/modelHelpers';
 
 export default {
     Model,
+    modelHelpers,
     LocatorInterface,
     ModelManagerInterface,
     RepositoryInterface,
