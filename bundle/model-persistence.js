@@ -1055,6 +1055,21 @@ var HTTPFactory = function () {
 
 var factory = new HTTPFactory();
 
+/**
+ * CustomTransformer for dynamic method definition.
+ */
+
+var CustomTransformer = function (_TransformerInterface) {
+    inherits(CustomTransformer, _TransformerInterface);
+
+    function CustomTransformer() {
+        classCallCheck(this, CustomTransformer);
+        return possibleConstructorReturn(this, (CustomTransformer.__proto__ || Object.getPrototypeOf(CustomTransformer)).apply(this, arguments));
+    }
+
+    return CustomTransformer;
+}(TransformerInterface);
+
 var index = {
     Model: Model,
     modelHelpers: helpers,
@@ -1072,7 +1087,8 @@ var index = {
     transformer: {
         TransformerInterface: TransformerInterface,
         InputTransformer: InputTransformer,
-        OutputTransformer: OutputTransformer
+        OutputTransformer: OutputTransformer,
+        CustomTransformer: CustomTransformer
     }
 };
 
