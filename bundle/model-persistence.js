@@ -575,7 +575,7 @@ var ModelHelpers = function () {
     }, {
         key: 'isModel',
         value: function isModel(object) {
-            return (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && typeof object.constructor === 'function' && object.constructor instanceof Model;
+            return (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && (object instanceof Model || typeof object.constructor === 'function' && object.constructor instanceof Model);
         }
 
         /**
@@ -1124,9 +1124,13 @@ var mergeTransformers = function mergeTransformers(transformers) {
              * @inheritdoc
              */
             value: function transform(object) {
+                var data = object;
+
                 transformers.forEach(function (transformer) {
-                    transformer.transform(object);
+                    data = transformer.transform(data);
                 });
+
+                return data;
             }
         }]);
         return _class;
