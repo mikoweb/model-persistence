@@ -200,6 +200,41 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+/**
+ * It's shit model type like object literal. No schema, no strong typing, no validation, no nothing.
+ */
+var DynamicModel = function () {
+    /**
+     * @param {Object} object
+     */
+    function DynamicModel(object) {
+        classCallCheck(this, DynamicModel);
+
+        if (object === null || (typeof object === 'undefined' ? 'undefined' : _typeof(object)) !== 'object') {
+            throw new TypeError('expecting object literal');
+        }
+
+        for (var prop in object) {
+            if (object.hasOwnProperty(prop)) {
+                this[prop] = object[prop];
+            }
+        }
+    }
+
+    /**
+     * @return {string}
+     */
+
+
+    createClass(DynamicModel, [{
+        key: 'toJSON',
+        value: function toJSON() {
+            return JSON.stringify(this);
+        }
+    }]);
+    return DynamicModel;
+}();
+
 var Interface = function () {
     function Interface() {
         classCallCheck(this, Interface);
@@ -586,7 +621,7 @@ var OutputTransformer = function (_TransformerInterface) {
 
             if (helpers.isModel(object)) {
                 data = helpers.getData(object);
-            } else if (helpers.isRawObject(object)) {
+            } else if (object instanceof DynamicModel || helpers.isRawObject(object)) {
                 data = object;
             }
 
@@ -1100,6 +1135,7 @@ var mergeTransformers = function mergeTransformers(transformers) {
 
 var index = {
     Model: Model,
+    DynamicModel: DynamicModel,
     modelHelpers: helpers,
     LocatorInterface: LocatorInterface,
     ModelManagerInterface: ModelManagerInterface,
