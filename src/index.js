@@ -11,6 +11,7 @@ import httpClientConfig from './http/clientConfig';
 import TransformerInterface from './transformer/TransformerInterface';
 import InputTransformer from './transformer/InputTransformer';
 import OutputTransformer from './transformer/OutputTransformer';
+import CustomTransformer from './transformer/CustomTransformer';
 import modelHelpers from './model/modelHelpers';
 
 export default {
@@ -30,6 +31,7 @@ export default {
     transformer: {
         TransformerInterface,
         InputTransformer,
-        OutputTransformer
+        OutputTransformer,
+        CustomTransformer
     }
 };
