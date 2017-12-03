@@ -490,33 +490,110 @@ var InputTransformer = function (_TransformerInterface) {
   return InputTransformer;
 }(TransformerInterface);
 
+var ModelHelpers = function () {
+    function ModelHelpers() {
+        classCallCheck(this, ModelHelpers);
+    }
+
+    createClass(ModelHelpers, [{
+        key: 'getData',
+
+        /**
+         * Get raw object data from model.
+         *
+         * @param {Model} model
+         * @param {boolean} isRaw
+         * @return {Object}
+         */
+        value: function getData(model) {
+            var isRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            if (!isRaw && !this.isModel(model)) {
+                throw new TypeError('expecting model to be Model, got ' + (typeof model === 'undefined' ? 'undefined' : _typeof(model)));
+            }
+
+            var data = {};
+
+            // This work's with ObjectModel 2.x version.
+            // For 3.x major must be changed to Object.keys()
+            for (var prop in model) {
+                if (model.hasOwnProperty(prop)) {
+                    var descriptor = Object.getOwnPropertyDescriptor(model, prop);
+
+                    if (typeof descriptor.get === 'function' && typeof model[prop] !== 'undefined') {
+                        var value = model[prop];
+
+                        data[prop] = this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        /**
+         * Is model?
+         *
+         * @param {Object} object
+         */
+
+    }, {
+        key: 'isModel',
+        value: function isModel(object) {
+            return (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && typeof object.constructor === 'function' && object.constructor instanceof Model;
+        }
+
+        /**
+         * Is raw model?
+         *
+         * @param {Object} object
+         */
+
+    }, {
+        key: 'isRawObject',
+        value: function isRawObject(object) {
+            return object !== null && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && object.constructor === Object;
+        }
+    }]);
+    return ModelHelpers;
+}();
+
+var helpers = new ModelHelpers();
+
 /**
  * Default output transformer.
  * Used as "middleware" between Model and data storage (e.g. HTTP Request).
  */
 
 var OutputTransformer = function (_TransformerInterface) {
-  inherits(OutputTransformer, _TransformerInterface);
+    inherits(OutputTransformer, _TransformerInterface);
 
-  function OutputTransformer() {
-    classCallCheck(this, OutputTransformer);
-    return possibleConstructorReturn(this, (OutputTransformer.__proto__ || Object.getPrototypeOf(OutputTransformer)).apply(this, arguments));
-  }
-
-  createClass(OutputTransformer, [{
-    key: 'transform',
-
-    /**
-     * By default, nothing changes.
-     *
-     * @inheritdoc
-     */
-    value: function transform(object) {
-      // TODO only properties from model schema (if object is Model)
-      return object;
+    function OutputTransformer() {
+        classCallCheck(this, OutputTransformer);
+        return possibleConstructorReturn(this, (OutputTransformer.__proto__ || Object.getPrototypeOf(OutputTransformer)).apply(this, arguments));
     }
-  }]);
-  return OutputTransformer;
+
+    createClass(OutputTransformer, [{
+        key: 'transform',
+
+        /**
+         * Only properties from model schema.
+         *
+         * @inheritdoc
+         */
+        value: function transform(object) {
+            var data = {};
+
+            if (helpers.isModel(object)) {
+                data = helpers.getData(object);
+            } else if (helpers.isRawObject(object)) {
+                data = object;
+            }
+
+            return data;
+        }
+    }]);
+    return OutputTransformer;
 }(TransformerInterface);
 
 /**
@@ -980,6 +1057,7 @@ var factory = new HTTPFactory();
 
 var index = {
     Model: Model,
+    modelHelpers: helpers,
     LocatorInterface: LocatorInterface,
     ModelManagerInterface: ModelManagerInterface,
     RepositoryInterface: RepositoryInterface,
