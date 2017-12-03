@@ -12,6 +12,7 @@ import TransformerInterface from './transformer/TransformerInterface';
 import InputTransformer from './transformer/InputTransformer';
 import OutputTransformer from './transformer/OutputTransformer';
 import CustomTransformer from './transformer/CustomTransformer';
+import mergeTransformers from './transformer/mergeTransformers';
 import modelHelpers from './model/modelHelpers';
 
 export default {
@@ -32,6 +33,7 @@ export default {
         TransformerInterface,
         InputTransformer,
         OutputTransformer,
-        CustomTransformer
+        CustomTransformer,
+        mergeTransformers
     }
 };
