@@ -575,7 +575,7 @@ var ModelHelpers = function () {
     }, {
         key: 'isModel',
         value: function isModel(object) {
-            return (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && (object instanceof Model || typeof object.constructor === 'function' && object.constructor instanceof Model);
+            return object !== null && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && (object instanceof Model || typeof object.constructor === 'function' && object.constructor instanceof Model);
         }
 
         /**
