@@ -549,16 +549,22 @@ var ModelHelpers = function () {
 
             var data = {};
 
-            // This work's with ObjectModel 2.x version.
-            // For 3.x major must be changed to Object.keys()
-            for (var prop in model) {
-                if (model.hasOwnProperty(prop)) {
-                    var descriptor = Object.getOwnPropertyDescriptor(model, prop);
+            if (this.isModel(model)) {
+                // This work's with ObjectModel 2.x version.
+                // For 3.x major must be changed to Object.keys()
+                for (var prop in model) {
+                    if (model.hasOwnProperty(prop)) {
+                        var descriptor = Object.getOwnPropertyDescriptor(model, prop);
 
-                    if (typeof descriptor.get === 'function' && typeof model[prop] !== 'undefined') {
-                        var value = model[prop];
-
-                        data[prop] = this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+                        if (typeof descriptor.get === 'function' && typeof model[prop] !== 'undefined') {
+                            data[prop] = this._getObjectValue(model, prop);
+                        }
+                    }
+                }
+            } else if (this.isRawObject(model)) {
+                for (var _prop in model) {
+                    if (model.hasOwnProperty(_prop)) {
+                        data[_prop] = this._getObjectValue(model, _prop);
                     }
                 }
             }
@@ -588,6 +594,21 @@ var ModelHelpers = function () {
         key: 'isRawObject',
         value: function isRawObject(object) {
             return object !== null && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && object.constructor === Object;
+        }
+
+        /**
+         * @param {Model|Object} model
+         * @param {string} prop
+         * @return {*}
+         * @private
+         */
+
+    }, {
+        key: '_getObjectValue',
+        value: function _getObjectValue(model, prop) {
+            var value = model[prop];
+
+            return this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
         }
     }]);
     return ModelHelpers;
