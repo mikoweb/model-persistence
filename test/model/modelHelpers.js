@@ -85,4 +85,101 @@ describe('model.modelHelpers', () => {
             expect(modelHelpers.isModel(null)).to.be.false;
         });
     });
+
+    describe('isRawObject results', () => {
+        it('valid literal object', () => {
+            expect(modelHelpers.isRawObject({'test': 'test'})).to.be.true;
+        });
+
+        it('new Object is valid', () => {
+            expect(modelHelpers.isRawObject(new Object())).to.be.true;
+        });
+
+        it('Object is valid', () => {
+            expect(modelHelpers.isRawObject(Object())).to.be.true;
+        });
+
+        it('Date object is invalid', () => {
+            expect(modelHelpers.isRawObject(new Date())).to.be.false;
+        });
+
+        it('extends object is invalid', () => {
+            class NewObject extends Object {}
+            expect(modelHelpers.isRawObject(new NewObject())).to.be.false;
+        });
+    });
+
+    describe('getData results', () => {
+        it('check model data', () => {
+            class Order extends Model({
+                product: {
+                    name: String,
+                    quantity: Number,
+                },
+                orderDate: Date
+            }) {
+                get FranekKimono() {
+                    return 'karate mistrz';
+                }
+            }
+
+            class SuperOrder extends Order.extend({
+                newField: [String],
+                subOrder: [Order]
+            }) {
+            }
+
+            const date = new Date();
+            const model = new SuperOrder({
+                product: {name: "Apple Pie", quantity: 1},
+                orderDate: date,
+                dupa: 'pl',
+                newField: 'jest',
+                subOrder: new Order({
+                    product: {name: "Dupa", quantity: 2},
+                    orderDate: date,
+                })
+            });
+
+            model.foo = 'ok';
+
+            expect({
+                product: {
+                    name: 'Apple Pie',
+                    quantity: 1
+                },
+                orderDate: date,
+                newField: 'jest',
+                subOrder: {
+                    product: {
+                        name: 'Dupa',
+                        quantity: 2
+                    },
+                    orderDate: date
+                }
+            }).to.deep.equal(modelHelpers.getData(model));
+        });
+
+        it('check data from literal object', () => {
+            expect({
+                foo: 'ok',
+                bar: 'ok',
+                deep: {
+                    ok: 'ok',
+                    moreDeep: {
+                        foo: 'bar'
+                    }
+                }
+            }).to.deep.equal(modelHelpers.getData({
+                foo: 'ok',
+                bar: 'ok',
+                deep: {
+                    ok: 'ok',
+                    moreDeep: {
+                        foo: 'bar'
+                    }
+                }
+            }, true));
+        });
+    });
 });
