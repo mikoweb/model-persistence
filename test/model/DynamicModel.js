@@ -1,18 +1,18 @@
-describe('model.DynamiModel', () => {
-    const DynamiModel = modelPersist.DynamicModel;
+describe('model.DynamicModel', () => {
+    const DynamicModel = modelPersist.DynamicModel;
 
     it('invalid argument in contructor', () => {
-        expect(() => new DynamiModel()).to.throw();
-        expect(() => new DynamiModel(null)).to.throw();
+        expect(() => new DynamicModel()).to.throw();
+        expect(() => new DynamicModel(null)).to.throw();
     });
 
     it('empty model', () => {
-        const model = new DynamiModel({});
+        const model = new DynamicModel({});
         expect(0).to.equal(Object.keys(model).length);
     });
 
     it('not empty model', () => {
-        const model = new DynamiModel({foo: 'ok'});
+        const model = new DynamicModel({foo: 'ok'});
         expect(1).to.equal(Object.keys(model).length);
     });
 
@@ -28,7 +28,7 @@ describe('model.DynamiModel', () => {
             }
         };
 
-        const model = new DynamiModel(data);
+        const model = new DynamicModel(data);
         expect(data).to.deep.equal(model);
     });
 });
