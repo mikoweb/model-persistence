@@ -15,16 +15,22 @@ class ModelHelpers {
 
         const data = {};
 
-        // This work's with ObjectModel 2.x version.
-        // For 3.x major must be changed to Object.keys()
-        for (const prop in model) {
-            if (model.hasOwnProperty(prop)) {
-                const descriptor = Object.getOwnPropertyDescriptor(model, prop);
+        if (this.isModel(model)) {
+            // This work's with ObjectModel 2.x version.
+            // For 3.x major must be changed to Object.keys()
+            for (const prop in model) {
+                if (model.hasOwnProperty(prop)) {
+                    const descriptor = Object.getOwnPropertyDescriptor(model, prop);
 
-                if (typeof descriptor.get === 'function' && typeof model[prop] !== 'undefined') {
-                    const value = model[prop];
-
-                    data[prop] = this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+                    if (typeof descriptor.get === 'function' && typeof model[prop] !== 'undefined') {
+                        data[prop] = this._getObjectValue(model, prop);
+                    }
+                }
+            }
+        } else if (this.isRawObject(model)) {
+            for (const prop in model) {
+                if (model.hasOwnProperty(prop)) {
+                    data[prop] = this._getObjectValue(model, prop);
                 }
             }
         }
@@ -49,6 +55,18 @@ class ModelHelpers {
      */
     isRawObject(object) {
         return object !== null && typeof object === 'object' && object.constructor === Object
+    }
+
+    /**
+     * @param {Model|Object} model
+     * @param {string} prop
+     * @return {*}
+     * @private
+     */
+    _getObjectValue(model, prop) {
+        const value = model[prop];
+
+        return this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
     }
 }
 
