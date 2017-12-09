@@ -1,6 +1,10 @@
 describe('http.clientConfig', () => {
     const config = modelPersist.http.config;
 
+    afterEach(() => {
+        config.options = {};
+    });
+
     it('default no options', () => {
         expect({}).to.deep.equal(config.options);
     });
