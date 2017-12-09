@@ -1,0 +1,3 @@
+describe('model-manager.HTTPModelManager', () => {
+
+});
