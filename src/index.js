@@ -1,5 +1,7 @@
+import namespace from './core/namespace';
 import Model from 'objectmodel'; // http://objectmodel.js.org/docs/v2/
 import DynamicModel from './model/DynamicModel';
+import Interface from './core/Interface';
 import LocatorInterface from './locator/LocatorInterface';
 import ModelManagerInterface from './model-manager/ModelManagerInterface';
 import RepositoryInterface from './repository/RepositoryInterface';
@@ -16,7 +18,8 @@ import CustomTransformer from './transformer/CustomTransformer';
 import mergeTransformers from './transformer/mergeTransformers';
 import modelHelpers from './model/modelHelpers';
 
-export default {
+const modelPersist = {
+    Interface,
     Model,
     DynamicModel,
     modelHelpers,
@@ -39,3 +42,7 @@ export default {
         mergeTransformers
     }
 };
+
+namespace(modelPersist);
+
+export default modelPersist;
