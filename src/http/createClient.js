@@ -6,10 +6,13 @@ import config from './clientConfig';
  * @return {AxiosInstance}
  */
 const createClient = (locator) => {
-    return axios.create(Object.assign({}, config.options, {
-        baseURL: locator.getBaseURL(),
-        headers: locator.headers
-    }));
+    const options = {};
+
+    if (locator !== null && typeof locator === 'object' && Object.keys(locator.headers).length > 0) {
+        options.headers = Object.assign({}, locator.headers);
+    }
+
+    return axios.create(Object.assign({}, config.options, options));
 };
 
 export default createClient;
