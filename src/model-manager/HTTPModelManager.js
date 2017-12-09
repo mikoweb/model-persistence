@@ -1,9 +1,9 @@
-import ModelManagerInterface from './ModelManagerInterface';
+import ModelManagerAbstract from './ModelManagerAbstract';
 
 /**
  * Data persistence by HTTP protocol.
  */
-export default class HTTPModelManager extends ModelManagerInterface {
+export default class HTTPModelManager extends ModelManagerAbstract {
     /**
      * @param {HTTPLocatorAbstract} locator
      * @param {AxiosInstance} httpClient
@@ -58,28 +58,6 @@ export default class HTTPModelManager extends ModelManagerInterface {
                 reject(e);
             });
         });
-    }
-
-    /**
-     * Create input transformer object.
-     *
-     * @return {TransformerInterface}
-     */
-    createInputTransformer() {
-        const Transformer = this._locator.getInputTransformerClass();
-
-        return new Transformer();
-    }
-
-    /**
-     * Create output transformer object.
-     *
-     * @return {TransformerInterface}
-     */
-    createOutputTransformer() {
-        const Transformer = this._locator.getOutputTransformerClass();
-
-        return new Transformer();
     }
 
     /**

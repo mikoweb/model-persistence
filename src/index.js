@@ -5,6 +5,8 @@ import Interface from './core/Interface';
 import LocatorInterface from './locator/LocatorInterface';
 import ModelManagerInterface from './model-manager/ModelManagerInterface';
 import RepositoryInterface from './repository/RepositoryInterface';
+import LocatorAbstract from './locator/LocatorAbstract';
+import ModelManagerAbstract from './model-manager/ModelManagerAbstract';
 import HTTPLocatorAbstract from './locator/HTTPLocatorAbstract';
 import HTTPModelManager from './model-manager/HTTPModelManager';
 import HTTPRepository from './repository/HTTPRepository';
@@ -17,6 +19,11 @@ import OutputTransformer from './transformer/OutputTransformer';
 import CustomTransformer from './transformer/CustomTransformer';
 import mergeTransformers from './transformer/mergeTransformers';
 import modelHelpers from './model/modelHelpers';
+import StorageLocatorAbstract from './locator/StorageLocatorAbstract';
+import LocalStorageLocatorAbstract from './locator/LocalStorageLocatorAbstract';
+import SessionStorageLocatorAbstract from './locator/SessionStorageLocatorAbstract';
+import StorageModelManager from './model-manager/StorageModelManager';
+import StorageRepository from './repository/StorageRepository';
 
 const modelPersist = {
     Interface,
@@ -26,10 +33,17 @@ const modelPersist = {
     LocatorInterface,
     ModelManagerInterface,
     RepositoryInterface,
+    LocatorAbstract,
+    ModelManagerAbstract,
     HTTPLocatorAbstract,
     HTTPModelManager,
     HTTPRepository,
     httpFactory,
+    StorageLocatorAbstract,
+    LocalStorageLocatorAbstract,
+    SessionStorageLocatorAbstract,
+    StorageModelManager,
+    StorageRepository,
     http: {
         createClient: createHTTPClient,
         config: httpClientConfig
