@@ -745,11 +745,54 @@ var LocatorAbstract = function (_LocatorInterface) {
 }(LocatorInterface);
 
 /**
+ * Data persistence layer - common.
+ */
+
+var ModelManagerAbstract = function (_ModelManagerInterfac) {
+  inherits(ModelManagerAbstract, _ModelManagerInterfac);
+
+  function ModelManagerAbstract() {
+    classCallCheck(this, ModelManagerAbstract);
+    return possibleConstructorReturn(this, (ModelManagerAbstract.__proto__ || Object.getPrototypeOf(ModelManagerAbstract)).apply(this, arguments));
+  }
+
+  createClass(ModelManagerAbstract, [{
+    key: 'createInputTransformer',
+
+    /**
+     * Create input transformer object.
+     *
+     * @return {TransformerInterface}
+     */
+    value: function createInputTransformer() {
+      var Transformer = this._locator.getInputTransformerClass();
+
+      return new Transformer();
+    }
+
+    /**
+     * Create output transformer object.
+     *
+     * @return {TransformerInterface}
+     */
+
+  }, {
+    key: 'createOutputTransformer',
+    value: function createOutputTransformer() {
+      var Transformer = this._locator.getOutputTransformerClass();
+
+      return new Transformer();
+    }
+  }]);
+  return ModelManagerAbstract;
+}(ModelManagerInterface);
+
+/**
  * Data persistence by HTTP protocol.
  */
 
-var HTTPModelManager = function (_ModelManagerInterfac) {
-    inherits(HTTPModelManager, _ModelManagerInterfac);
+var HTTPModelManager = function (_ModelManagerAbstract) {
+    inherits(HTTPModelManager, _ModelManagerAbstract);
 
     /**
      * @param {HTTPLocatorAbstract} locator
@@ -828,34 +871,6 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
         }
 
         /**
-         * Create input transformer object.
-         *
-         * @return {TransformerInterface}
-         */
-
-    }, {
-        key: 'createInputTransformer',
-        value: function createInputTransformer() {
-            var Transformer = this._locator.getInputTransformerClass();
-
-            return new Transformer();
-        }
-
-        /**
-         * Create output transformer object.
-         *
-         * @return {TransformerInterface}
-         */
-
-    }, {
-        key: 'createOutputTransformer',
-        value: function createOutputTransformer() {
-            var Transformer = this._locator.getOutputTransformerClass();
-
-            return new Transformer();
-        }
-
-        /**
          * Common request options.
          * This method is for overwriting.
          *
@@ -871,7 +886,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
         }
     }]);
     return HTTPModelManager;
-}(ModelManagerInterface);
+}(ModelManagerAbstract);
 
 /**
  * Data collection from HTTP protocol.
@@ -1172,6 +1187,322 @@ var mergeTransformers = function mergeTransformers(transformers) {
     }(TransformerInterface);
 };
 
+/**
+ * Data persistence by Web Storage API.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
+ */
+
+var StorageModelManager = function (_ModelManagerAbstract) {
+    inherits(StorageModelManager, _ModelManagerAbstract);
+
+    /**
+     * @param {StorageLocatorAbstract} locator
+     */
+    function StorageModelManager(locator) {
+        classCallCheck(this, StorageModelManager);
+
+        /** @protected */
+        var _this = possibleConstructorReturn(this, (StorageModelManager.__proto__ || Object.getPrototypeOf(StorageModelManager)).call(this));
+
+        _this._locator = locator;
+        return _this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return {Promise.<Model>}
+     */
+
+
+    createClass(StorageModelManager, [{
+        key: 'get',
+        value: function get$$1(id, modelClass) {
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var model = void 0;
+
+            try {
+                model = this.getSync(id, modelClass, options);
+            } catch (e) {
+                return Promise.reject(e);
+            }
+
+            return Promise.resolve(model);
+        }
+
+        /**
+         * Synchronous version of the `get` method.
+         *
+         * @param id
+         * @param {Model.prototype} modelClass
+         * @param {Object} [options]
+         *
+         * @return {Model}
+         */
+
+    }, {
+        key: 'getSync',
+        value: function getSync(id, modelClass) {
+            var item = this._locator.storage.getItem(this._locator.locateById(id));
+
+            if (item === null) {
+                throw new TypeError('expecting getItem() to be String, got null');
+            }
+
+            return new modelClass(this.createInputTransformer().transform(JSON.parse(item)));
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'save',
+        value: function save(model) {
+            var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            try {
+                this.saveSync(model, options);
+            } catch (e) {
+                return Promise.reject(e);
+            }
+
+            return Promise.resolve(true);
+        }
+
+        /**
+         * Synchronous version of the `save` method.
+         *
+         * @param {Model} model
+         * @param {Object} [options]
+         */
+
+    }, {
+        key: 'saveSync',
+        value: function saveSync(model) {
+            this._locator.storage.setItem(this._locator.locate(model), JSON.stringify(this.createOutputTransformer().transform(model)));
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(model) {
+            var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            try {
+                this.removeSync(model, options);
+            } catch (e) {
+                return Promise.reject(e);
+            }
+
+            return Promise.resolve(true);
+        }
+
+        /**
+         * Synchronous version of the `remove` method.
+         *
+         * @param {Model} model
+         * @param {Object} [options]
+         */
+
+    }, {
+        key: 'removeSync',
+        value: function removeSync(model) {
+            this._locator.storage.removeItem(this._locator.locate(model));
+        }
+    }]);
+    return StorageModelManager;
+}(ModelManagerAbstract);
+
+/**
+ * Locator to Storage API.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
+ */
+
+var StorageLocatorAbstract = function (_LocatorAbstract) {
+    inherits(StorageLocatorAbstract, _LocatorAbstract);
+
+    function StorageLocatorAbstract() {
+        classCallCheck(this, StorageLocatorAbstract);
+        return possibleConstructorReturn(this, (StorageLocatorAbstract.__proto__ || Object.getPrototypeOf(StorageLocatorAbstract)).apply(this, arguments));
+    }
+
+    createClass(StorageLocatorAbstract, [{
+        key: 'locate',
+
+
+        /**
+         * @inheritdoc
+         */
+        value: function locate(model) {
+            var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            if (this.isEmptyModelId(model)) {
+                throw new Error('Model Id cannot be empty in StorageLocator');
+            }
+
+            return this.locateById(this.getModelId(model), options);
+        }
+
+        /**
+         * @inheritdoc
+         */
+
+    }, {
+        key: 'locateById',
+        value: function locateById(id) {
+            return this.basePath + '/' + id;
+        }
+
+        /**
+         * @inheritdoc
+         *
+         * @return {StorageModelManager.prototype}
+         */
+
+    }, {
+        key: 'getModelManagerClass',
+        value: function getModelManagerClass() {
+            return StorageModelManager;
+        }
+    }, {
+        key: 'storage',
+
+        /**
+         * Web Storage API.
+         *
+         * @return {Storage}
+         */
+        get: function get$$1() {
+            throw new Error('storage should be defined in StorageLocator');
+        }
+
+        /**
+         * Base path in URL.
+         *
+         * @return {string}
+         */
+
+    }, {
+        key: 'basePath',
+        get: function get$$1() {
+            throw new Error('basePath should be defined in StorageLocator');
+        }
+    }]);
+    return StorageLocatorAbstract;
+}(LocatorAbstract);
+
+/**
+ * Locator to localStorage.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+ */
+
+var LocalStorageLocatorAbstract = function (_StorageLocatorAbstra) {
+  inherits(LocalStorageLocatorAbstract, _StorageLocatorAbstra);
+
+  function LocalStorageLocatorAbstract() {
+    classCallCheck(this, LocalStorageLocatorAbstract);
+    return possibleConstructorReturn(this, (LocalStorageLocatorAbstract.__proto__ || Object.getPrototypeOf(LocalStorageLocatorAbstract)).apply(this, arguments));
+  }
+
+  createClass(LocalStorageLocatorAbstract, [{
+    key: 'storage',
+
+    /**
+     * @inheritDoc
+     */
+    get: function get$$1() {
+      return localStorage;
+    }
+  }]);
+  return LocalStorageLocatorAbstract;
+}(StorageLocatorAbstract);
+
+/**
+ * Locator to sessionStorage.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+ */
+
+var SessionStorageLocatorAbstract = function (_StorageLocatorAbstra) {
+  inherits(SessionStorageLocatorAbstract, _StorageLocatorAbstra);
+
+  function SessionStorageLocatorAbstract() {
+    classCallCheck(this, SessionStorageLocatorAbstract);
+    return possibleConstructorReturn(this, (SessionStorageLocatorAbstract.__proto__ || Object.getPrototypeOf(SessionStorageLocatorAbstract)).apply(this, arguments));
+  }
+
+  createClass(SessionStorageLocatorAbstract, [{
+    key: 'storage',
+
+    /**
+     * @inheritDoc
+     */
+    get: function get$$1() {
+      return sessionStorage;
+    }
+  }]);
+  return SessionStorageLocatorAbstract;
+}(StorageLocatorAbstract);
+
+/**
+ * Data collection from Web Storage API.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
+ */
+
+var StorageRepository = function (_RepositoryInterface) {
+  inherits(StorageRepository, _RepositoryInterface);
+
+  /**
+   * @param {Model.prototype} modelClass
+   * @param {StorageLocatorAbstract} locator
+   * @param {StorageModelManager} manager
+   */
+  function StorageRepository(modelClass, locator, manager) {
+    classCallCheck(this, StorageRepository);
+
+    /** @protected */
+    var _this = possibleConstructorReturn(this, (StorageRepository.__proto__ || Object.getPrototypeOf(StorageRepository)).call(this));
+
+    _this._modelClass = modelClass;
+    /** @protected */
+    _this._locator = locator;
+    /** @protected */
+    _this._manager = manager;
+    return _this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+
+
+  createClass(StorageRepository, [{
+    key: 'findOne',
+    value: function findOne(id) {
+      return this._manager.get(id, this._modelClass);
+    }
+
+    /**
+     * Synchronous version of the `findOne` method.
+     *
+     * @param id
+     *
+     * @return {Model}
+     */
+
+  }, {
+    key: 'findOneSync',
+    value: function findOneSync(id) {
+      return this._manager.getSync(id, this._modelClass);
+    }
+  }]);
+  return StorageRepository;
+}(RepositoryInterface);
+
 var modelPersist = {
     Interface: Interface,
     Model: Model,
@@ -1180,10 +1511,17 @@ var modelPersist = {
     LocatorInterface: LocatorInterface,
     ModelManagerInterface: ModelManagerInterface,
     RepositoryInterface: RepositoryInterface,
+    LocatorAbstract: LocatorAbstract,
+    ModelManagerAbstract: ModelManagerAbstract,
     HTTPLocatorAbstract: HTTPLocatorAbstract,
     HTTPModelManager: HTTPModelManager,
     HTTPRepository: HTTPRepository,
     httpFactory: factory,
+    StorageLocatorAbstract: StorageLocatorAbstract,
+    LocalStorageLocatorAbstract: LocalStorageLocatorAbstract,
+    SessionStorageLocatorAbstract: SessionStorageLocatorAbstract,
+    StorageModelManager: StorageModelManager,
+    StorageRepository: StorageRepository,
     http: {
         createClient: createClient,
         config: options
