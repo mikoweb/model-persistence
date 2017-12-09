@@ -737,9 +737,11 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
     function HTTPModelManager(locator, httpClient) {
         classCallCheck(this, HTTPModelManager);
 
+        /** @protected */
         var _this = possibleConstructorReturn(this, (HTTPModelManager.__proto__ || Object.getPrototypeOf(HTTPModelManager)).call(this));
 
         _this._locator = locator;
+        /** @protected */
         _this._client = httpClient;
         return _this;
     }
