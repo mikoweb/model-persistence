@@ -10,7 +10,9 @@ export default class HTTPModelManager extends ModelManagerInterface {
      */
     constructor(locator, httpClient) {
         super();
+        /** @protected */
         this._locator = locator;
+        /** @protected */
         this._client = httpClient;
     }
 
