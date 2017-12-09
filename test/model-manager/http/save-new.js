@@ -9,7 +9,7 @@ describe('model-manager.HTTPModelManager', () => {
         moxios.uninstall()
     });
 
-    it('remove model', () => {
+    it('save new model', () => {
         class Locator extends modelPersist.HTTPLocatorAbstract {
             get basePath() {
                 return '/article';
@@ -19,30 +19,39 @@ describe('model-manager.HTTPModelManager', () => {
         const locator = new Locator();
         const manager = factory.createManager(locator);
         const Model = new modelPersist.Model({
-            id: Number,
+            id: [Number],
             title: String,
             content: String
         });
 
         const model = new Model({
-            id: 100,
             title: 'Lorem Ipsum',
             content: '<p>Lorem Ipsum</p>'
         });
 
+        model.fake = 'fake';
+
         moxios.wait(() => {
             const request = moxios.requests.mostRecent();
+            const transformer = new (locator.getOutputTransformerClass());
 
-            expect('/article/100').to.equal(request.url);
-            expect('delete').to.equal(request.config.method);
+            expect('/article').to.equal(request.url);
+            expect('post').to.equal(request.config.method);
+            const data = transformer.transform(model);
+            expect(data).to.not.have.property('fake');
+            expect(data).to.not.have.property('id');
+
+            expect(JSON.stringify({
+                data
+            })).to.equal(request.config.data);
 
             request.respondWith({
                 status: 200
             });
         });
 
-        return manager.remove(model).then((removed) => {
-            expect(removed).to.be.true;
+        return manager.save(model).then((saved) => {
+            expect(saved).to.be.true;
         });
     });
 });

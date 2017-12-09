@@ -1,3 +1,0 @@
-describe('model-manager.HTTPModelManager', () => {
-
-});
