@@ -9,10 +9,10 @@ export default class HTTPLocatorAbstract extends LocatorAbstract {
     /**
      * Host path like https://google.com. It's optionally.
      *
-     * @return {string|null}
+     * @return {string}
      */
     get hostPath() {
-        return null;
+        return '';
     }
 
     /**

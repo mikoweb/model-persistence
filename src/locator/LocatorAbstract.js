@@ -17,8 +17,8 @@ export default class LocatorAbstract extends LocatorInterface {
      * @inheritdoc
      */
     getModelId(model) {
-        if (typeof model !== 'object' || !model.hasOwnProperty(this.getIdPropName())) {
-            new Error('Model has no property ' + this.getIdPropName());
+        if (model === null || typeof model !== 'object') {
+            throw new Error('argument is not Object');
         }
 
         return model[this.getIdPropName()];
