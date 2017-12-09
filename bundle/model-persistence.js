@@ -681,8 +681,8 @@ var LocatorAbstract = function (_LocatorInterface) {
     }, {
         key: 'getModelId',
         value: function getModelId(model) {
-            if ((typeof model === 'undefined' ? 'undefined' : _typeof(model)) !== 'object' || !model.hasOwnProperty(this.getIdPropName())) {
-                new Error('Model has no property ' + this.getIdPropName());
+            if (model === null || (typeof model === 'undefined' ? 'undefined' : _typeof(model)) !== 'object') {
+                throw new Error('argument is not Object');
             }
 
             return model[this.getIdPropName()];
@@ -994,10 +994,10 @@ var HTTPLocatorAbstract = function (_LocatorAbstract) {
     /**
      * Host path like https://google.com. It's optionally.
      *
-     * @return {string|null}
+     * @return {string}
      */
     get: function get$$1() {
-      return null;
+      return '';
     }
 
     /**
