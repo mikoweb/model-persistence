@@ -760,9 +760,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
                 _this2._client.get(_this2._locator.locateById(id), _this2._getRequestOptions()).then(function (response) {
                     resolve(new modelClass(_this2.createInputTransformer().transform(response.data)));
                 }).catch(function (e) {
-                    return function () {
-                        reject(e);
-                    };
+                    reject(e);
                 });
             });
         }
