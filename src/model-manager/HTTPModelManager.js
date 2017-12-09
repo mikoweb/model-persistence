@@ -21,12 +21,11 @@ export default class HTTPModelManager extends ModelManagerInterface {
      */
     get(id, modelClass, options = {}) {
         return new Promise((resolve, reject) => {
-            this._client.get(this._locator.locateById(id), this._getRequestOptions())
-                .then((response) => {
-                    resolve(new modelClass(this.createInputTransformer().transform(response.data)));
-                }).catch((e) => () => {
-                    reject(e);
-                });
+            this._client.get(this._locator.locateById(id), this._getRequestOptions()).then((response) => {
+                resolve(new modelClass(this.createInputTransformer().transform(response.data)));
+            }).catch((e) => {
+                reject(e);
+            });
         });
     }
 
