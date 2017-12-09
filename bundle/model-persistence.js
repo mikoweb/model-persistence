@@ -775,23 +775,15 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
             var _this3 = this;
 
             return new Promise(function (resolve, reject) {
-                var request = void 0;
                 var requestOptions = _this3._getRequestOptions({
                     data: _this3.createOutputTransformer().transform(model)
                 });
 
-                if (_this3._locator.isEmptyModelId(model)) {
-                    request = _this3._client.post(_this3._locator.locate(model), requestOptions);
-                } else {
-                    request = _this3._client.put(_this3._locator.locate(model), requestOptions);
-                }
-
-                request.then(function () {
+                var method = _this3._locator.isEmptyModelId(model) ? _this3._client.post : _this3._client.put;
+                method(_this3._locator.locate(model), requestOptions).then(function () {
                     resolve(true);
                 }).catch(function (e) {
-                    return function () {
-                        reject(e);
-                    };
+                    reject(e);
                 });
             });
         }
@@ -809,9 +801,7 @@ var HTTPModelManager = function (_ModelManagerInterfac) {
                 _this4._client.delete(_this4._locator.locate(model), _this4._getRequestOptions()).then(function () {
                     resolve(true);
                 }).catch(function (e) {
-                    return function () {
-                        reject(e);
-                    };
+                    reject(e);
                 });
             });
         }
