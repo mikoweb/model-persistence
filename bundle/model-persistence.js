@@ -1063,10 +1063,13 @@ var options = new ClientConfig();
  * @return {AxiosInstance}
  */
 var createClient = function createClient(locator) {
-    return axios.create(Object.assign({}, options.options, {
-        baseURL: locator.getBaseURL(),
-        headers: locator.headers
-    }));
+    var options$$1 = {};
+
+    if (locator !== null && (typeof locator === 'undefined' ? 'undefined' : _typeof(locator)) === 'object' && Object.keys(locator.headers).length > 0) {
+        options$$1.headers = Object.assign({}, locator.headers);
+    }
+
+    return axios.create(Object.assign({}, options.options, options$$1));
 };
 
 var HTTPFactory = function () {
