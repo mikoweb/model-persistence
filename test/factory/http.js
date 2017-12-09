@@ -1,4 +1,4 @@
-describe('http.clientConfig', () => {
+describe('factory.http', () => {
     const factory = modelPersist.httpFactory;
 
     class Locator extends modelPersist.HTTPLocatorAbstract {
