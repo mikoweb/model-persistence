@@ -201,6 +201,27 @@ var possibleConstructorReturn = function (self, call) {
 };
 
 /**
+ * @param {Object} object
+ */
+var namespace = function namespace(object) {
+    Object.keys(object).forEach(function (key) {
+        var prop = object[key];
+        var descriptor = Object.getOwnPropertyDescriptor(object, key);
+
+        Object.defineProperty(object, key, {
+            enumerable: true,
+            configurable: false,
+            writable: false,
+            value: descriptor.value
+        });
+
+        if (prop !== null && (typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) === 'object' && prop.constructor === Object) {
+            namespace(prop);
+        }
+    });
+};
+
+/**
  * It's shit model type like object literal. No schema, no strong typing, no validation, no nothing.
  */
 var DynamicModel = function () {
@@ -1151,7 +1172,8 @@ var mergeTransformers = function mergeTransformers(transformers) {
     }(TransformerInterface);
 };
 
-var index = {
+var modelPersist = {
+    Interface: Interface,
     Model: Model,
     DynamicModel: DynamicModel,
     modelHelpers: helpers,
@@ -1175,7 +1197,9 @@ var index = {
     }
 };
 
-return index;
+namespace(modelPersist);
+
+return modelPersist;
 
 })));
 //# sourceMappingURL=model-persistence.js.map
