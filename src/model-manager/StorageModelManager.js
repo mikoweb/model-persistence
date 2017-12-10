@@ -21,15 +21,14 @@ export default class StorageModelManager extends ModelManagerAbstract {
      * @return {Promise.<Model>}
      */
     get(id, modelClass, options = {}) {
-        let model;
-
-        try {
-            model = this.getSync(id, modelClass, options);
-        } catch (e) {
-            return Promise.reject(e);
-        }
-
-        return Promise.resolve(model);
+        return new Promise((resolve, reject) => {
+            try {
+                const model = this.getSync(id, modelClass, options);
+                resolve(model);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     /**
@@ -73,13 +72,14 @@ export default class StorageModelManager extends ModelManagerAbstract {
      * @inheritdoc
      */
     save(model, options = {}) {
-        try {
-            this.saveSync(model, options);
-        } catch (e) {
-            return Promise.reject(e);
-        }
-
-        return Promise.resolve(true);
+        return new Promise((resolve, reject) => {
+            try {
+                this.saveSync(model, options);
+                resolve(true);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     /**
@@ -99,13 +99,14 @@ export default class StorageModelManager extends ModelManagerAbstract {
      * @inheritdoc
      */
     remove(model, options = {}) {
-        try {
-            this.removeSync(model, options);
-        } catch (e) {
-            return Promise.reject(e);
-        }
-
-        return Promise.resolve(true);
+        return new Promise((resolve, reject) => {
+            try {
+                this.removeSync(model, options);
+                resolve(true);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     /**
