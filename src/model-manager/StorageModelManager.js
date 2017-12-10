@@ -96,4 +96,15 @@ export default class StorageModelManager extends ModelManagerAbstract {
     removeSync(model, options = {}) {
         this._locator.storage.removeItem(this._locator.locate(model));
     }
+
+    /**
+     * Does exists an item with given id?
+     *
+     * @param id
+     *
+     * @return {boolean}
+     */
+    has(id) {
+        return this._locator.storage.getItem(this._locator.locateById(id)) !== null;
+    }
 }
