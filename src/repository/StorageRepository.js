@@ -37,4 +37,13 @@ export default class StorageRepository extends RepositoryInterface {
     findOneSync(id) {
         return this._manager.getSync(id, this._modelClass);
     }
+
+    /**
+     * Get all Models.
+     *
+     * @return {Model.Array}
+     */
+    getAll() {
+        return this._manager.getAll(this._modelClass);
+    }
 }
