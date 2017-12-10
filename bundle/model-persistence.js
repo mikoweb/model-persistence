@@ -1218,17 +1218,18 @@ var StorageModelManager = function (_ModelManagerAbstract) {
     createClass(StorageModelManager, [{
         key: 'get',
         value: function get$$1(id, modelClass) {
+            var _this2 = this;
+
             var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-            var model = void 0;
-
-            try {
-                model = this.getSync(id, modelClass, options);
-            } catch (e) {
-                return Promise.reject(e);
-            }
-
-            return Promise.resolve(model);
+            return new Promise(function (resolve, reject) {
+                try {
+                    var model = _this2.getSync(id, modelClass, options);
+                    resolve(model);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         }
 
         /**
@@ -1254,21 +1255,47 @@ var StorageModelManager = function (_ModelManagerAbstract) {
         }
 
         /**
+         * Get all stored Models.
+         *
+         * @param {Model.prototype} modelClass
+         *
+         * @return {Model.Array}
+         */
+
+    }, {
+        key: 'getAll',
+        value: function getAll(modelClass) {
+            var _this3 = this;
+
+            var ArrayModel = new Model.Array(modelClass);
+            var items = [];
+
+            this.getKeys().forEach(function (id) {
+                items.push(_this3.getSync(id, modelClass));
+            });
+
+            return ArrayModel(items);
+        }
+
+        /**
          * @inheritdoc
          */
 
     }, {
         key: 'save',
         value: function save(model) {
+            var _this4 = this;
+
             var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            try {
-                this.saveSync(model, options);
-            } catch (e) {
-                return Promise.reject(e);
-            }
-
-            return Promise.resolve(true);
+            return new Promise(function (resolve, reject) {
+                try {
+                    _this4.saveSync(model, options);
+                    resolve(true);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         }
 
         /**
@@ -1282,6 +1309,8 @@ var StorageModelManager = function (_ModelManagerAbstract) {
         key: 'saveSync',
         value: function saveSync(model) {
             this._locator.storage.setItem(this._locator.locate(model), JSON.stringify(this.createOutputTransformer().transform(model)));
+
+            this._persistId(this._locator.getModelId(model));
         }
 
         /**
@@ -1291,15 +1320,18 @@ var StorageModelManager = function (_ModelManagerAbstract) {
     }, {
         key: 'remove',
         value: function remove(model) {
+            var _this5 = this;
+
             var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            try {
-                this.removeSync(model, options);
-            } catch (e) {
-                return Promise.reject(e);
-            }
-
-            return Promise.resolve(true);
+            return new Promise(function (resolve, reject) {
+                try {
+                    _this5.removeSync(model, options);
+                    resolve(true);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         }
 
         /**
@@ -1313,6 +1345,106 @@ var StorageModelManager = function (_ModelManagerAbstract) {
         key: 'removeSync',
         value: function removeSync(model) {
             this._locator.storage.removeItem(this._locator.locate(model));
+            this._removeId(this._locator.getModelId(model));
+        }
+
+        /**
+         * Does exists an item with given id?
+         *
+         * @param id
+         *
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'has',
+        value: function has(id) {
+            return this._locator.storage.getItem(this._locator.locateById(id)) !== null;
+        }
+
+        /**
+         * Return Array with all stored models ids.
+         */
+
+    }, {
+        key: 'getKeys',
+        value: function getKeys() {
+            var _this6 = this;
+
+            var ids = [];
+            var item = this._locator.storage.getItem(this._getIdsKey());
+
+            if (item !== null) {
+                var data = void 0;
+
+                try {
+                    data = JSON.parse(item);
+                } catch (e) {
+                    data = [];
+                }
+
+                if (Array.isArray(data)) {
+                    data.forEach(function (id) {
+                        if (id !== null && _this6.has(id) && typeof id.toString === 'function' && ids.indexOf(id.toString()) === -1) {
+                            ids.push(id.toString());
+                        }
+                    });
+                }
+            }
+
+            return ids;
+        }
+
+        /**
+         * The key that gives access to Models Ids.
+         *
+         * @return {string}
+         *
+         * @protected
+         */
+
+    }, {
+        key: '_getIdsKey',
+        value: function _getIdsKey() {
+            return '__ids__' + this._locator.basePath;
+        }
+
+        /**
+         * Persist Model Id.
+         *
+         * @param id
+         *
+         * @protected
+         */
+
+    }, {
+        key: '_persistId',
+        value: function _persistId(id) {
+            if (id !== null && this.has(id) && typeof id.toString === 'function') {
+                var ids = this.getKeys();
+
+                if (ids.indexOf(id.toString()) === -1) {
+                    ids.push(id.toString());
+                    this._locator.storage.setItem(this._getIdsKey(), JSON.stringify(ids));
+                }
+            }
+        }
+
+        /**
+         * Remove Model Id.
+         *
+         * @param id
+         *
+         * @protected
+         */
+
+    }, {
+        key: '_removeId',
+        value: function _removeId(id) {
+            var ids = this.getKeys().filter(function (el) {
+                return el.toString() !== id.toString();
+            });
+            this._locator.storage.setItem(this._getIdsKey(), JSON.stringify(ids));
         }
     }]);
     return StorageModelManager;
@@ -1498,6 +1630,18 @@ var StorageRepository = function (_RepositoryInterface) {
     key: 'findOneSync',
     value: function findOneSync(id) {
       return this._manager.getSync(id, this._modelClass);
+    }
+
+    /**
+     * Get all Models.
+     *
+     * @return {Model.Array}
+     */
+
+  }, {
+    key: 'getAll',
+    value: function getAll() {
+      return this._manager.getAll(this._modelClass);
     }
   }]);
   return StorageRepository;
