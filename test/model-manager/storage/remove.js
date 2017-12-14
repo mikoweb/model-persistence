@@ -38,14 +38,23 @@ describe('model-manager.StorageModelManager', () => {
     });
 
     it('removeSync', () => {
+        expect([]).to.deep.equal(manager.getKeys());
+        expect(manager.getAll(Model)).to.have.lengthOf(0);
+
         manager.saveSync(new Model({
             id: 1,
             title: 'New Lorem Ipsum',
             content: '<p>New Lorem Ipsum</p>'
         }));
 
+        expect(['1']).to.deep.equal(manager.getKeys());
+        expect(manager.getAll(Model)).to.have.lengthOf(1);
+
         expect(manager.has(1)).to.be.true;
         manager.removeSync(manager.getSync(1, Model));
         expect(manager.has(1)).to.be.false;
+
+        expect([]).to.deep.equal(manager.getKeys());
+        expect(manager.getAll(Model)).to.have.lengthOf(0);
     });
 });
