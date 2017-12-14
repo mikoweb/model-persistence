@@ -1053,6 +1053,44 @@ var HTTPLocatorAbstract = function (_LocatorAbstract) {
   return HTTPLocatorAbstract;
 }(LocatorAbstract);
 
+var FactoryInterface = function (_Interface) {
+    inherits(FactoryInterface, _Interface);
+
+    function FactoryInterface() {
+        classCallCheck(this, FactoryInterface);
+        return possibleConstructorReturn(this, (FactoryInterface.__proto__ || Object.getPrototypeOf(FactoryInterface)).apply(this, arguments));
+    }
+
+    createClass(FactoryInterface, [{
+        key: 'createManager',
+
+        /**
+         * Create ModelManager object.
+         *
+         * @param {LocatorInterface} locator
+         * @return {ModelManagerInterface}
+         */
+        value: function createManager(locator) {
+            this.defineInterfaceMethod();
+        }
+
+        /**
+         * Create Repository object.
+         *
+         * @param {Model.prototype} modelClass
+         * @param {LocatorInterface} locator
+         * @return {RepositoryInterface}
+         */
+
+    }, {
+        key: 'createRepository',
+        value: function createRepository(modelClass, locator) {
+            this.defineInterfaceMethod();
+        }
+    }]);
+    return FactoryInterface;
+}(Interface);
+
 var ClientConfig = function () {
     function ClientConfig() {
         classCallCheck(this, ClientConfig);
@@ -1098,16 +1136,19 @@ var createClient = function createClient(locator) {
     return axios.create(Object.assign({}, options.options, options$$1));
 };
 
-var HTTPFactory = function () {
+var HTTPFactory = function (_FactoryInterface) {
+    inherits(HTTPFactory, _FactoryInterface);
+
     function HTTPFactory() {
         classCallCheck(this, HTTPFactory);
+        return possibleConstructorReturn(this, (HTTPFactory.__proto__ || Object.getPrototypeOf(HTTPFactory)).apply(this, arguments));
     }
 
     createClass(HTTPFactory, [{
         key: 'createManager',
 
         /**
-         * Create ModelManager object.
+         * @inheritDoc
          *
          * @param {HTTPLocatorAbstract} locator
          * @return {HTTPModelManager}
@@ -1119,7 +1160,7 @@ var HTTPFactory = function () {
         }
 
         /**
-         * Create Repository object.
+         * @inheritDoc
          *
          * @param {Model.prototype} modelClass
          * @param {HTTPLocatorAbstract} locator
@@ -1136,7 +1177,7 @@ var HTTPFactory = function () {
         }
     }]);
     return HTTPFactory;
-}();
+}(FactoryInterface);
 
 var factory = new HTTPFactory();
 
@@ -1245,10 +1286,11 @@ var StorageModelManager = function (_ModelManagerAbstract) {
     }, {
         key: 'getSync',
         value: function getSync(id, modelClass) {
-            var item = this._locator.storage.getItem(this._locator.locateById(id));
+            var locate = this._locator.locateById(id);
+            var item = this._locator.storage.getItem(locate);
 
             if (item === null) {
-                throw new TypeError('expecting getItem() to be String, got null');
+                throw new TypeError('Item with the key [' + locate + '] was not found');
             }
 
             return new modelClass(this.createInputTransformer().transform(JSON.parse(item)));
@@ -1451,6 +1493,73 @@ var StorageModelManager = function (_ModelManagerAbstract) {
 }(ModelManagerAbstract);
 
 /**
+ * Data collection from Web Storage API.
+ * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
+ */
+
+var StorageRepository = function (_RepositoryInterface) {
+  inherits(StorageRepository, _RepositoryInterface);
+
+  /**
+   * @param {Model.prototype} modelClass
+   * @param {StorageLocatorAbstract} locator
+   * @param {StorageModelManager} manager
+   */
+  function StorageRepository(modelClass, locator, manager) {
+    classCallCheck(this, StorageRepository);
+
+    /** @protected */
+    var _this = possibleConstructorReturn(this, (StorageRepository.__proto__ || Object.getPrototypeOf(StorageRepository)).call(this));
+
+    _this._modelClass = modelClass;
+    /** @protected */
+    _this._locator = locator;
+    /** @protected */
+    _this._manager = manager;
+    return _this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+
+
+  createClass(StorageRepository, [{
+    key: 'findOne',
+    value: function findOne(id) {
+      return this._manager.get(id, this._modelClass);
+    }
+
+    /**
+     * Synchronous version of the `findOne` method.
+     *
+     * @param id
+     *
+     * @return {Model}
+     */
+
+  }, {
+    key: 'findOneSync',
+    value: function findOneSync(id) {
+      return this._manager.getSync(id, this._modelClass);
+    }
+
+    /**
+     * Get all Models.
+     *
+     * @return {Model.Array}
+     */
+
+  }, {
+    key: 'getAll',
+    value: function getAll() {
+      return this._manager.getAll(this._modelClass);
+    }
+  }]);
+  return StorageRepository;
+}(RepositoryInterface);
+
+/**
  * Locator to Storage API.
  * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
  */
@@ -1500,6 +1609,18 @@ var StorageLocatorAbstract = function (_LocatorAbstract) {
         key: 'getModelManagerClass',
         value: function getModelManagerClass() {
             return StorageModelManager;
+        }
+
+        /**
+         * @inheritdoc
+         *
+         * @return {StorageRepository.prototype}
+         */
+
+    }, {
+        key: 'getRepositoryClass',
+        value: function getRepositoryClass() {
+            return StorageRepository;
         }
     }, {
         key: 'storage',
@@ -1580,72 +1701,50 @@ var SessionStorageLocatorAbstract = function (_StorageLocatorAbstra) {
   return SessionStorageLocatorAbstract;
 }(StorageLocatorAbstract);
 
-/**
- * Data collection from Web Storage API.
- * @url https://developer.mozilla.org/en-US/docs/Web/API/Storage
- */
+var StorageFactory = function (_FactoryInterface) {
+    inherits(StorageFactory, _FactoryInterface);
 
-var StorageRepository = function (_RepositoryInterface) {
-  inherits(StorageRepository, _RepositoryInterface);
-
-  /**
-   * @param {Model.prototype} modelClass
-   * @param {StorageLocatorAbstract} locator
-   * @param {StorageModelManager} manager
-   */
-  function StorageRepository(modelClass, locator, manager) {
-    classCallCheck(this, StorageRepository);
-
-    /** @protected */
-    var _this = possibleConstructorReturn(this, (StorageRepository.__proto__ || Object.getPrototypeOf(StorageRepository)).call(this));
-
-    _this._modelClass = modelClass;
-    /** @protected */
-    _this._locator = locator;
-    /** @protected */
-    _this._manager = manager;
-    return _this;
-  }
-
-  /**
-   * @inheritdoc
-   */
-
-
-  createClass(StorageRepository, [{
-    key: 'findOne',
-    value: function findOne(id) {
-      return this._manager.get(id, this._modelClass);
+    function StorageFactory() {
+        classCallCheck(this, StorageFactory);
+        return possibleConstructorReturn(this, (StorageFactory.__proto__ || Object.getPrototypeOf(StorageFactory)).apply(this, arguments));
     }
 
-    /**
-     * Synchronous version of the `findOne` method.
-     *
-     * @param id
-     *
-     * @return {Model}
-     */
+    createClass(StorageFactory, [{
+        key: 'createManager',
 
-  }, {
-    key: 'findOneSync',
-    value: function findOneSync(id) {
-      return this._manager.getSync(id, this._modelClass);
-    }
+        /**
+         * @inheritDoc
+         *
+         * @param {StorageLocatorAbstract} locator
+         * @return {StorageModelManager}
+         */
+        value: function createManager(locator) {
+            var Manager = locator.getModelManagerClass();
 
-    /**
-     * Get all Models.
-     *
-     * @return {Model.Array}
-     */
+            return new Manager(locator);
+        }
 
-  }, {
-    key: 'getAll',
-    value: function getAll() {
-      return this._manager.getAll(this._modelClass);
-    }
-  }]);
-  return StorageRepository;
-}(RepositoryInterface);
+        /**
+         * @inheritDoc
+         *
+         * @param {Model.prototype} modelClass
+         * @param {StorageLocatorAbstract} locator
+         * @return {StorageRepository}
+         */
+
+    }, {
+        key: 'createRepository',
+        value: function createRepository(modelClass, locator) {
+            var Repository = locator.getRepositoryClass();
+            var manager = this.createManager(locator);
+
+            return new Repository(modelClass, locator, manager);
+        }
+    }]);
+    return StorageFactory;
+}(FactoryInterface);
+
+var factory$1 = new StorageFactory();
 
 var modelPersist = {
     Interface: Interface,
@@ -1666,6 +1765,7 @@ var modelPersist = {
     SessionStorageLocatorAbstract: SessionStorageLocatorAbstract,
     StorageModelManager: StorageModelManager,
     StorageRepository: StorageRepository,
+    storageFactory: factory$1,
     http: {
         createClient: createClient,
         config: options
