@@ -41,10 +41,11 @@ export default class StorageModelManager extends ModelManagerAbstract {
      * @return {Model}
      */
     getSync(id, modelClass, options = {}) {
-        const item = this._locator.storage.getItem(this._locator.locateById(id));
+        const locate = this._locator.locateById(id);
+        const item = this._locator.storage.getItem(locate);
 
         if (item === null) {
-            throw new TypeError('expecting getItem() to be String, got null');
+            throw new TypeError(`Item with the key [${locate}] was not found`);
         }
 
         return new modelClass(this.createInputTransformer().transform(JSON.parse(item)));
