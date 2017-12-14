@@ -1,8 +1,9 @@
+import FactoryInterface from './FactoryInterface';
 import createClient from '../http/createClient';
 
-export default class HTTPFactory {
+export default class HTTPFactory extends FactoryInterface {
     /**
-     * Create ModelManager object.
+     * @inheritDoc
      *
      * @param {HTTPLocatorAbstract} locator
      * @return {HTTPModelManager}
@@ -14,7 +15,7 @@ export default class HTTPFactory {
     }
 
     /**
-     * Create Repository object.
+     * @inheritDoc
      *
      * @param {Model.prototype} modelClass
      * @param {HTTPLocatorAbstract} locator
