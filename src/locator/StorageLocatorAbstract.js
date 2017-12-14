@@ -1,5 +1,6 @@
 import LocatorAbstract from './LocatorAbstract';
 import StorageModelManager from '../model-manager/StorageModelManager';
+import StorageRepository from '../repository/StorageRepository';
 
 /**
  * Locator to Storage API.
@@ -49,5 +50,14 @@ export default class StorageLocatorAbstract extends LocatorAbstract {
      */
     getModelManagerClass() {
         return StorageModelManager;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return {StorageRepository.prototype}
+     */
+    getRepositoryClass() {
+        return StorageRepository;
     }
 }
