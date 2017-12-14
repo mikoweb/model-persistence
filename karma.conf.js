@@ -17,6 +17,7 @@ module.exports = function(config) {
     files: [
       'node_modules/axios/dist/axios.js',
       'node_modules/objectmodel/dist/object-model.js',
+      'bundle/fakeLocalStorage.js',
       'bundle/model-persistence.js',
       'node_modules/moxios/dist/moxios.js',
       'test/**/**.js'

@@ -13,6 +13,12 @@ gulp.task('build-lib', () => {
     });
 });
 
+gulp.task('build-fake-local-storage', () => {
+    return rollupBundle('./src/fakeLocalStorage.js', 'fakeLocalStorage.js', 'fakeLocalStorage', {
+        externalHelpers: false,
+    });
+});
+
 gulp.task('dist-lib', ['build-lib'], () => {
     return bundleUglify(Path.bundle('/model-persistence.js'), Path.bundle());
 });
