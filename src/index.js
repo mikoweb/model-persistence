@@ -24,6 +24,7 @@ import LocalStorageLocatorAbstract from './locator/LocalStorageLocatorAbstract';
 import SessionStorageLocatorAbstract from './locator/SessionStorageLocatorAbstract';
 import StorageModelManager from './model-manager/StorageModelManager';
 import StorageRepository from './repository/StorageRepository';
+import storageFactory from './factory/storage';
 
 const modelPersist = {
     Interface,
@@ -44,6 +45,7 @@ const modelPersist = {
     SessionStorageLocatorAbstract,
     StorageModelManager,
     StorageRepository,
+    storageFactory,
     http: {
         createClient: createHTTPClient,
         config: httpClientConfig
