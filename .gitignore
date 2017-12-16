@@ -4,3 +4,6 @@ yarn-debug.log*
 yarn-error.log*
 node_modules/
 .yarn-integrity
+api/fakeLocalStorage.md
+api/index.md
+api/core
