@@ -433,7 +433,7 @@ var ModelManagerInterface = function (_Interface) {
      * @async
      * @param {Model} model
      * @param {Object} [options]
-     * @return {Promise.<Boolean>}
+     * @return {Promise.<Object>}
      */
 
   }, {
@@ -448,7 +448,7 @@ var ModelManagerInterface = function (_Interface) {
      * @async
      * @param {Model} model
      * @param {Object} [options]
-     * @return {Promise.<Boolean>}
+     * @return {Promise.<Object>}
      */
 
   }, {
@@ -844,8 +844,8 @@ var HTTPModelManager = function (_ModelManagerAbstract) {
                 });
 
                 var method = _this3._locator.isEmptyModelId(model) ? _this3._client.post : _this3._client.put;
-                method(_this3._locator.locate(model), requestOptions).then(function () {
-                    resolve(true);
+                method(_this3._locator.locate(model), requestOptions).then(function (response) {
+                    resolve(response.data !== null && _typeof(response.data) === 'object' ? response.data : {});
                 }).catch(function (e) {
                     reject(e);
                 });
@@ -862,8 +862,8 @@ var HTTPModelManager = function (_ModelManagerAbstract) {
             var _this4 = this;
 
             return new Promise(function (resolve, reject) {
-                _this4._client.delete(_this4._locator.locate(model), _this4._getRequestOptions()).then(function () {
-                    resolve(true);
+                _this4._client.delete(_this4._locator.locate(model), _this4._getRequestOptions()).then(function (response) {
+                    resolve(response.data !== null && _typeof(response.data) === 'object' ? response.data : {});
                 }).catch(function (e) {
                     reject(e);
                 });
@@ -1333,7 +1333,7 @@ var StorageModelManager = function (_ModelManagerAbstract) {
             return new Promise(function (resolve, reject) {
                 try {
                     _this4.saveSync(model, options);
-                    resolve(true);
+                    resolve({});
                 } catch (e) {
                     reject(e);
                 }
@@ -1369,7 +1369,7 @@ var StorageModelManager = function (_ModelManagerAbstract) {
             return new Promise(function (resolve, reject) {
                 try {
                     _this5.removeSync(model, options);
-                    resolve(true);
+                    resolve({});
                 } catch (e) {
                     reject(e);
                 }
