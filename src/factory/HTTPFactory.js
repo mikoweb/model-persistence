@@ -3,7 +3,7 @@ import createClient from '../http/createClient';
 
 export default class HTTPFactory extends FactoryInterface {
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * @param {HTTPLocatorAbstract} locator
      * @return {HTTPModelManager}
@@ -15,7 +15,7 @@ export default class HTTPFactory extends FactoryInterface {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * @param {Model.prototype} modelClass
      * @param {HTTPLocatorAbstract} locator

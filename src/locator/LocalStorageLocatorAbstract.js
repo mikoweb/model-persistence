@@ -6,7 +6,7 @@ import StorageLocatorAbstract from './StorageLocatorAbstract';
  */
 export default class LocalStorageLocatorAbstract extends StorageLocatorAbstract {
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     get storage() {
         return localStorage;

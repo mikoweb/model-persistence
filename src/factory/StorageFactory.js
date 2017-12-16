@@ -2,7 +2,7 @@ import FactoryInterface from './FactoryInterface';
 
 export default class StorageFactory extends FactoryInterface {
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * @param {StorageLocatorAbstract} locator
      * @return {StorageModelManager}
@@ -14,7 +14,7 @@ export default class StorageFactory extends FactoryInterface {
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      *
      * @param {Model.prototype} modelClass
      * @param {StorageLocatorAbstract} locator
