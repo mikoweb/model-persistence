@@ -37,12 +37,16 @@ describe('model-manager.HTTPModelManager', () => {
             expect('delete').to.equal(request.config.method);
 
             request.respondWith({
-                status: 200
+                status: 200,
+                response: {
+                    errors: [],
+                }
             });
         });
 
-        return manager.remove(model).then((removed) => {
-            expect(removed).to.be.true;
+        return manager.remove(model).then((data) => {
+            expect(data).to.be.an('object');
+            expect({errors: []}).to.deep.equal(data);
         });
     });
 });

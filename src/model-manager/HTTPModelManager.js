@@ -39,8 +39,8 @@ export default class HTTPModelManager extends ModelManagerAbstract {
             });
 
             const method = this._locator.isEmptyModelId(model) ? this._client.post : this._client.put;
-            method(this._locator.locate(model), requestOptions).then(() => {
-                resolve(true);
+            method(this._locator.locate(model), requestOptions).then((response) => {
+                resolve(response.data !== null && typeof response.data === 'object' ? response.data : {});
             }).catch((e) => {
                 reject(e);
             });
@@ -52,8 +52,8 @@ export default class HTTPModelManager extends ModelManagerAbstract {
      */
     remove(model, options = {}) {
         return new Promise((resolve, reject) => {
-            this._client.delete(this._locator.locate(model), this._getRequestOptions()).then(() => {
-                resolve(true);
+            this._client.delete(this._locator.locate(model), this._getRequestOptions()).then((response) => {
+                resolve(response.data !== null && typeof response.data === 'object' ? response.data : {});
             }).catch((e) => {
                 reject(e);
             });

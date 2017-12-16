@@ -23,7 +23,7 @@ export default class ModelManagerInterface extends Interface {
      * @async
      * @param {Model} model
      * @param {Object} [options]
-     * @return {Promise.<Boolean>}
+     * @return {Promise.<Object>}
      */
     save(model, options = {}) {
         this.defineInterfaceMethod();
@@ -35,7 +35,7 @@ export default class ModelManagerInterface extends Interface {
      * @async
      * @param {Model} model
      * @param {Object} [options]
-     * @return {Promise.<Boolean>}
+     * @return {Promise.<Object>}
      */
     remove(model, options = {}) {
         this.defineInterfaceMethod();

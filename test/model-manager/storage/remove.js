@@ -31,9 +31,8 @@ describe('model-manager.StorageModelManager', () => {
 
         expect(manager.has(1)).to.be.true;
 
-        return manager.remove(manager.getSync(1, Model)).then((removed) => {
-            expect(removed).to.be.true;
-            expect(manager.has(1)).to.be.false;
+        return manager.remove(manager.getSync(1, Model)).then((data) => {
+            expect(data).to.be.an('object');
         });
     });
 

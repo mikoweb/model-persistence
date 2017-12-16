@@ -46,12 +46,16 @@ describe('model-manager.HTTPModelManager', () => {
             })).to.equal(request.config.data);
 
             request.respondWith({
-                status: 200
+                status: 200,
+                response: {
+                    errors: [],
+                }
             });
         });
 
-        return manager.save(model).then((saved) => {
-            expect(saved).to.be.true;
+        return manager.save(model).then((data) => {
+            expect(data).to.be.an('object');
+            expect({errors: []}).to.deep.equal(data);
         });
     });
 });

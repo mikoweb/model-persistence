@@ -76,7 +76,7 @@ export default class StorageModelManager extends ModelManagerAbstract {
         return new Promise((resolve, reject) => {
             try {
                 this.saveSync(model, options);
-                resolve(true);
+                resolve({});
             } catch (e) {
                 reject(e);
             }
@@ -103,7 +103,7 @@ export default class StorageModelManager extends ModelManagerAbstract {
         return new Promise((resolve, reject) => {
             try {
                 this.removeSync(model, options);
-                resolve(true);
+                resolve({});
             } catch (e) {
                 reject(e);
             }

@@ -27,8 +27,8 @@ describe('model-manager.StorageModelManager', () => {
             id: 1,
             title: 'Lorem Ipsum',
             content: '<p>Lorem Ipsum</p>'
-        })).then((saved) => {
-            expect(saved).to.be.true;
+        })).then((data) => {
+            expect(data).to.be.an('object');
             const foundModel = manager.getSync(1, Model);
             expect(1).to.equal(foundModel.id);
             expect('Lorem Ipsum').to.equal(foundModel.title);
