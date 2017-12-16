@@ -1148,7 +1148,7 @@ var HTTPFactory = function (_FactoryInterface) {
         key: 'createManager',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * @param {HTTPLocatorAbstract} locator
          * @return {HTTPModelManager}
@@ -1160,7 +1160,7 @@ var HTTPFactory = function (_FactoryInterface) {
         }
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * @param {Model.prototype} modelClass
          * @param {HTTPLocatorAbstract} locator
@@ -1666,7 +1666,7 @@ var LocalStorageLocatorAbstract = function (_StorageLocatorAbstra) {
     key: 'storage',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     get: function get$$1() {
       return localStorage;
@@ -1692,7 +1692,7 @@ var SessionStorageLocatorAbstract = function (_StorageLocatorAbstra) {
     key: 'storage',
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     get: function get$$1() {
       return sessionStorage;
@@ -1713,7 +1713,7 @@ var StorageFactory = function (_FactoryInterface) {
         key: 'createManager',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * @param {StorageLocatorAbstract} locator
          * @return {StorageModelManager}
@@ -1725,7 +1725,7 @@ var StorageFactory = function (_FactoryInterface) {
         }
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          *
          * @param {Model.prototype} modelClass
          * @param {StorageLocatorAbstract} locator
