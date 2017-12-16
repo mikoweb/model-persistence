@@ -3,6 +3,10 @@
 Library intended for data persistence using HTTP or 
 [Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
 
+Demos:
+
+* [localStorage example](https://jsfiddle.net/rmweb/62mpgov6/)
+
 ## Installing
 
 Using npm:
