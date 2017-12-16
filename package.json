@@ -2,11 +2,19 @@
   "name": "model-persistence",
   "version": "1.0.0",
   "description": "Model persistence library.",
-  "main": "src/index.js",
+  "keywords": [
+    "model",
+    "persist",
+    "persistence",
+    "repository",
+    "ObjectModel",
+    "axios",
+    "Web Storage"
+  ],
+  "main": "bundle/model-persistence.js",
   "repository": "https://github.com/mikoweb/model-persistence",
   "author": "Rafał Mikołajun <root@rmweb.pl>",
-  "license": "BSD",
-  "private": true,
+  "license": "BSD-3-Clause",
   "scripts": {
     "karma": "karma",
     "test": "karma start",
