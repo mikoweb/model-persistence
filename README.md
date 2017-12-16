@@ -223,3 +223,15 @@ repository.findByFirstName('Dolores').then((persons) => {
     console.log(persons); // all persons who have the name Dolores
 });
 ```
+
+## Configuring HTTP Client
+
+You can change the global client settings, by setter `modelPersist.http.config.options`.
+
+```javascript
+modelPersist.http.config.options = {
+    headers: {
+        'X-API-Key': 'secret'
+    }
+};
+```
