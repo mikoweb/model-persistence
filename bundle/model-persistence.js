@@ -627,9 +627,21 @@ var ModelHelpers = function () {
     }, {
         key: '_getObjectValue',
         value: function _getObjectValue(model, prop) {
-            var value = model[prop];
+            var _this = this;
 
-            return this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+            var value = void 0;
+
+            if (Array.isArray(model[prop])) {
+                value = [];
+                model[prop].forEach(function (item) {
+                    value.push(_this.isRawObject(item) || _this.isModel(item) ? _this.getData(item, true) : item);
+                });
+            } else {
+                value = model[prop];
+                value = this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+            }
+
+            return value;
         }
     }]);
     return ModelHelpers;
