@@ -34,16 +34,15 @@ export default class HTTPModelManager extends ModelManagerAbstract {
      */
     save(model, options = {}) {
         return new Promise((resolve, reject) => {
-            const requestOptions = this._getRequestOptions({
-                data: this.createOutputTransformer().transform(model)
-            });
+            const requestOptions = this._getRequestOptions();
 
             const method = this._locator.isEmptyModelId(model) ? this._client.post : this._client.put;
-            method(this._locator.locate(model), requestOptions).then((response) => {
-                resolve(response.data !== null && typeof response.data === 'object' ? response.data : {});
-            }).catch((e) => {
-                reject(e);
-            });
+            method(this._locator.locate(model), this.createOutputTransformer().transform(model), requestOptions)
+                .then((response) => {
+                    resolve(response.data !== null && typeof response.data === 'object' ? response.data : {});
+                }).catch((e) => {
+                    reject(e);
+                });
         });
     }
 

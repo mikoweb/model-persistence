@@ -40,10 +40,7 @@ describe('model-manager.HTTPModelManager', () => {
             expect('put').to.equal(request.config.method);
             const data = transformer.transform(model);
             expect(data).to.not.have.property('fake');
-
-            expect(JSON.stringify({
-                data
-            })).to.equal(request.config.data);
+            expect(JSON.stringify(data)).to.equal(request.config.data);
 
             request.respondWith({
                 status: 200,

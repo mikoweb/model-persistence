@@ -41,9 +41,7 @@ describe('model-manager.HTTPModelManager', () => {
             expect(data).to.not.have.property('fake');
             expect(data).to.not.have.property('id');
 
-            expect(JSON.stringify({
-                data
-            })).to.equal(request.config.data);
+            expect(JSON.stringify(data)).to.equal(request.config.data);
 
             request.respondWith({
                 status: 200,
