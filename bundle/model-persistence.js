@@ -839,12 +839,10 @@ var HTTPModelManager = function (_ModelManagerAbstract) {
             var _this3 = this;
 
             return new Promise(function (resolve, reject) {
-                var requestOptions = _this3._getRequestOptions({
-                    data: _this3.createOutputTransformer().transform(model)
-                });
+                var requestOptions = _this3._getRequestOptions();
 
                 var method = _this3._locator.isEmptyModelId(model) ? _this3._client.post : _this3._client.put;
-                method(_this3._locator.locate(model), requestOptions).then(function (response) {
+                method(_this3._locator.locate(model), _this3.createOutputTransformer().transform(model), requestOptions).then(function (response) {
                     resolve(response.data !== null && _typeof(response.data) === 'object' ? response.data : {});
                 }).catch(function (e) {
                     reject(e);
