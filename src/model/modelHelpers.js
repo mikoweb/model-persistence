@@ -64,9 +64,19 @@ class ModelHelpers {
      * @private
      */
     _getObjectValue(model, prop) {
-        const value = model[prop];
+        let value;
 
-        return this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+        if (Array.isArray(model[prop])) {
+            value = [];
+            model[prop].forEach((item) => {
+                value.push(this.isRawObject(item) || this.isModel(item) ? this.getData(item, true) : item);
+            });
+        } else {
+            value = model[prop];
+            value = this.isRawObject(value) || this.isModel(value) ? this.getData(value, true) : value;
+        }
+
+        return value;
     }
 }
 

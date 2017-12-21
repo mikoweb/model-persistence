@@ -181,5 +181,32 @@ describe('model.modelHelpers', () => {
                 }
             }, true));
         });
+
+        it('model with array', () => {
+            const Item = Model({
+                name: String
+            });
+
+            const Collection = Model({
+                description: String,
+                items: Model.Array(Item)
+            });
+
+            const model = new Collection({
+                description: 'Test',
+                items: [
+                    {name: 'Item 1'},
+                    {name: 'Item 2'}
+                ]
+            });
+
+            expect({
+                description: 'Test',
+                items: [
+                    {name: 'Item 1'},
+                    {name: 'Item 2'}
+                ]
+            }).to.deep.equal(modelHelpers.getData(model));
+        });
     });
 });
