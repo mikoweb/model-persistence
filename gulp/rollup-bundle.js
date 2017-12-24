@@ -13,13 +13,14 @@ const babel = require('rollup-plugin-babel');
  *
  * @return {Promise}
  */
-module.exports = (inputPath, distFileName, name, babelOptions = {}, globalModules ={}, commonjsOptions = {}) => {
+module.exports = (inputPath, distFileName, name, babelOptions = {}, globalModules = {}, commonjsOptions = {}) => {
     return new Promise((resolve, reject) => {
         rollup.rollup({
             input: inputPath,
+            external: Object.keys(globalModules),
             plugins: [
-                commonjs(commonjsOptions),
-                babel(babelOptions),
+                commonjs(Object.assign({}, commonjsOptions)),
+                babel(Object.assign({}, babelOptions)),
             ],
         }).then((bundle) => {
             resolve(bundle.write({
